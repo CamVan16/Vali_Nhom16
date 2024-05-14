@@ -5,32 +5,28 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
     const [loading, setLoading] = useState(false);
-    const history = useNavigate();
     const [form] = Form.useForm();
-
+    const navigate = useNavigate();
     const handleSignIn = async () => {
         try {
             setLoading(true);
             const values = await form.validateFields();
-            const { username, password } = values;
+            const { email, password } = values;
             const response = await fetch('http://localhost:8080/api/v1/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
             });
             if (!response.ok) {
                 throw new Error('Failed to login');
             }
             const data = await response.json();
-            message.success('Login success');
-            const { _id } = data; // Lấy _id từ dữ liệu trả về
-            localStorage.setItem('userID', _id);
-            history.push('/');
+            localStorage.setItem('userID', data._id);
+            navigate('/ProductPages');
         } catch (error) {
             console.error('Error during login:', error);
-            message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }
@@ -45,8 +41,8 @@ const SignIn = () => {
                 wrapperCol={{ span: 15 }}
             >
                 <Form.Item
-                    label="Tên tài khoản"
-                    name="username"
+                    label="Tài khoản"
+                    name="email"
                     rules={[
                         {
                             required: true,

@@ -23,8 +23,8 @@ const CardProduct = ({ product }) => {
           <DiscountPercent>{product.discount}%</DiscountPercent>
         </StyleDis>
         <DiscountPrice>{formattedPrice(discountedPrice)}</DiscountPrice>
-        <Link to={`/ProductDetail/${product.id}`}>
-          <Button type="primary" danger>Xem sản phẩm</Button>
+        <Link to={`/ProductDetail/${product.id}`} style={{ display: 'block', width: '100%' }}>
+          <Button type="primary" danger style={{ width: '100%' }}>Xem sản phẩm</Button>
         </Link>
       </StyledContent>
     </StyleCard>

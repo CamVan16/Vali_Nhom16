@@ -20,17 +20,20 @@ public class UserService {
     }
 
     public Optional<User> getUserById(String _id) {
-        return repo.findBy_id(_id); 
+        return repo.findBy_id(_id);
     }
 
-    public boolean authenticateUser(String username, String password) {
-        Optional<User> userOptional = repo.findByUsername(username);
+    public Optional<User> authenticateUser(String email, String password) {
+        Optional<User> userOptional = repo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            return user.getPassword().equals(password);
+            if (user.getPassword().equals(password)) {
+                return Optional.of(user);
+            }
         }
-        return false;
+        return Optional.empty();
     }
+
     public void deleteUserById(String id) {
         repo.deleteById(id);
     }
