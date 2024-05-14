@@ -23,6 +23,8 @@ const SignUp = () => {
             const response = await axios.post('http://localhost:8080/api/v1/user/save', formData); // Adjust the URL accordingly
             console.log(response.data);
             message.success('User registered successfully!');
+            window.location.href = '/SignIn';
+
         } catch (error) {
             console.error('Error:', error);
             message.error('Registration failed!');
