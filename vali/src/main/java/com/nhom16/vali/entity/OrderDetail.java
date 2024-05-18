@@ -22,8 +22,6 @@ public class OrderDetail {
     private boolean isDelivered;
     private Date deliveredAt;
 
-
-    
     public static class OrderItem {
         private int idProduct;
         private String name;
@@ -31,10 +29,11 @@ public class OrderDetail {
         private String img;
         private double price;
         private Double discount;
-        //private String product;
+        // private String product;
 
         public OrderItem() {
         }
+
         public OrderItem(int idProduct, String name, int amount, String img, double price, Double discount) {
             this.idProduct = idProduct;
             this.name = name;
@@ -91,8 +90,9 @@ public class OrderDetail {
         public void setDiscount(Double discount) {
             this.discount = discount;
         }
-        
+
     }
+
     public static class ShippingAddress {
         private String fullName;
         private String address;
@@ -130,11 +130,15 @@ public class OrderDetail {
         public void setPhone(String phone) {
             this.phone = phone;
         }
-        
+
     }
+
     public OrderDetail() {
     }
-    public OrderDetail(String _id, List<OrderItem> orderItems, ShippingAddress shippingAddress, String paymentMethod, double itemsPrice, double shippingPrice, double totalPrice, User userInfo, boolean isPaid, Date paidAt, boolean isDelivered, Date deliveredAt) {
+
+    public OrderDetail(String _id, List<OrderItem> orderItems, ShippingAddress shippingAddress, String paymentMethod,
+            double itemsPrice, double shippingPrice, double totalPrice, User userInfo, boolean isPaid, Date paidAt,
+            boolean isDelivered, Date deliveredAt) {
         this._id = _id;
         this.orderItems = orderItems;
         this.shippingAddress = shippingAddress;
@@ -148,7 +152,7 @@ public class OrderDetail {
         this.isDelivered = isDelivered;
         this.deliveredAt = deliveredAt;
     }
-    
+
     public String get_id() {
         return _id;
     }
@@ -180,8 +184,6 @@ public class OrderDetail {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-
-    
 
     public double getItemsPrice() {
         return itemsPrice;
@@ -254,7 +256,7 @@ public class OrderDetail {
                 ", orderItems=" + orderItems +
                 ", shippingAddress=" + shippingAddress +
                 ", paymentMethod='" + paymentMethod + '\'' +
-                //", shipmentMethod='" + shipmentMethod + '\'' +
+                // ", shipmentMethod='" + shipmentMethod + '\'' +
                 ", itemsPrice=" + itemsPrice +
                 ", shippingPrice=" + shippingPrice +
                 ", totalPrice=" + totalPrice +
@@ -265,7 +267,5 @@ public class OrderDetail {
                 ", deliveredAt=" + deliveredAt +
                 '}';
     }
-    
-    
-    
+
 }

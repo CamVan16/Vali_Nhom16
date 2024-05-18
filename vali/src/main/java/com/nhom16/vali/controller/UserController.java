@@ -1,11 +1,11 @@
 package com.nhom16.vali.controller;
 
 import com.nhom16.vali.entity.User;
+//import com.nhom16.vali.entity.Address;
 import com.nhom16.vali.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.Map;
@@ -79,4 +79,56 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // @PostMapping(value = "/addAddress/{userId}")
+    // public ResponseEntity<User> addAddress(@PathVariable("userId") String userId,
+    // @RequestBody Address address) {
+    // Optional<User> userOptional = userService.getUserById(userId);
+    // if (userOptional.isPresent()) {
+    // User user = userOptional.get();
+    // user.getAddresses().add(address);
+    // userService.saveOrUpdate(user);
+    // return ResponseEntity.ok(user);
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
+    // }
+
+    // @PutMapping(value = "/updateAddress/{userId}/{addressId}")
+    // public ResponseEntity<User> updateAddress(@PathVariable("userId") String
+    // userId,
+    // @PathVariable("addressId") String addressId, @RequestBody Address
+    // updatedAddress) {
+    // Optional<User> userOptional = userService.getUserById(userId);
+    // if (userOptional.isPresent()) {
+    // User user = userOptional.get();
+    // for (Address address : user.getAddresses()) {
+    // if (address.getId().equals(addressId)) {
+    // address.setAddress(updatedAddress.getAddress());
+    // address.setMobile(updatedAddress.getMobile());
+    // userService.saveOrUpdate(user);
+    // return ResponseEntity.ok(user);
+    // }
+    // }
+    // return ResponseEntity.notFound().build(); // Không tìm thấy địa chỉ cần cập
+    // nhật
+    // } else {
+    // return ResponseEntity.notFound().build(); // Không tìm thấy người dùng
+    // }
+    // }
+
+    // @DeleteMapping(value = "/deleteAddress/{userId}/{addressId}")
+    // public ResponseEntity<User> deleteAddress(@PathVariable("userId") String
+    // userId,
+    // @PathVariable("addressId") String addressId) {
+    // Optional<User> userOptional = userService.getUserById(userId);
+    // if (userOptional.isPresent()) {
+    // User user = userOptional.get();
+    // user.getAddresses().removeIf(address -> address.getId().equals(addressId));
+    // userService.saveOrUpdate(user);
+    // return ResponseEntity.ok(user);
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
+    // }
 }

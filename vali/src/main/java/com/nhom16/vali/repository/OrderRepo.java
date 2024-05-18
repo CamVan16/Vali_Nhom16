@@ -1,9 +1,9 @@
 package com.nhom16.vali.repository;
 
-import com.nhom16.vali.entity.Student;
+import com.nhom16.vali.entity.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudentRepo extends MongoRepository<Student, String> {
+public interface OrderRepo extends MongoRepository<Order, String> {
 }

@@ -111,6 +111,7 @@ import { Pagination } from 'antd';
 import { StylePage, StylePagination } from './style';
 import Category from '../../components/Category/Category';
 import SortPrice from '../../components/SortPrice/SortPrice';
+import Header from '../../components/Header/Header';
 const ProductPages = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -174,6 +175,7 @@ const ProductPages = () => {
 
   return (
     <div>
+      <Header></Header>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', marginLeft:'10%'}}>
         <Category onCategoryChange={handleCategoryChange} />
         <div style={{ marginLeft: '10px' }}>

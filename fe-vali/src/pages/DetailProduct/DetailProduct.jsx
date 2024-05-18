@@ -40,6 +40,7 @@ const DetailProduct = () => {
       </div>
       <div style={{ flex: 1 }}>
         <ProductInfo
+          id = {id}
           name={name}
           price={price[selectedSize]}
           discount={discount}
