@@ -1,5 +1,7 @@
 package com.nhom16.vali.entity;
 
+import org.bson.types.ObjectId;
+
 public class Address {
     private String id;
     private String name;
@@ -7,14 +9,14 @@ public class Address {
     private String mobile;
 
     public Address(String id, String name, String address, String mobile) {
-
-        this.id = id;
+        this.id = id != null ? id : new ObjectId().toString(); // Auto-generate ID if null
         this.name = name;
         this.address = address;
         this.mobile = mobile;
     }
 
     public Address() {
+        this.id = new ObjectId().toString();
     }
 
     public String getId() {
@@ -22,7 +24,7 @@ public class Address {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = id != null ? id : new ObjectId().toString(); // Auto-generate ID if null
     }
 
     public String getName() {
@@ -53,8 +55,8 @@ public class Address {
     public String toString() {
         return "Address{" +
                 "id='" + id + '\'' +
-                "name='" + name + '\'' +
-                "address='" + address + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
                 ", mobile='" + mobile + '\'' +
                 '}';
     }

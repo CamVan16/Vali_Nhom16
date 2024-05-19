@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -113,4 +114,20 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found");
         }
     }
+
+    @PostMapping(value = "/{userId}/removeItems")
+    public ResponseEntity<?> removeSelectedItemsFromCart(@PathVariable String userId,
+            @RequestBody List<String> itemIds) {
+        Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
+
+        if (cartOptional.isPresent()) {
+            Cart cart = cartOptional.get();
+            cart.getItems().removeIf(item -> itemIds.contains(item.getId()));
+            cartService.saveOrUpdate(cart);
+            return ResponseEntity.ok("Selected items removed successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
