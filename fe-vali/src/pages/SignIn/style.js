@@ -1,11 +1,17 @@
 import styled from 'styled-components'
 import { Input } from 'antd'
-export const WrapperContainer = styled.div`
+export const StyleContainer = styled.div`
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-contents: center;
     height: 600px;
+    margin: 1% 10%;
+    border: 2px solid #1A93FF;
+    border-radius: 25px;
+    @media (max-width: 1024px)
+    {
+      margin: 1% 0;
+    }
 `
 
 export const StyleLeftCon = styled.div`

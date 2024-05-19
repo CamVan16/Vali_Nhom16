@@ -1,16 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    name: '',
+    username: '',
     email: '',
-    phone: '',
+    mobile: '',
     address: '',
     avatar: '',
-    access_token: '',
+    //access_token: '',
     id: '',
     isAdmin: false,
     city: '',
-    refreshToken: ''
+    //refreshToken: ''
 }
 
 export const userSlide = createSlice({
@@ -18,11 +18,11 @@ export const userSlide = createSlice({
     initialState,
     reducers: {
         updateUser: (state, action) => {
-            const { name = '', email = '', access_token = '', address = '', phone = '', avatar = '', _id = '', isAdmin,city= '',refreshToken = '' } = action.payload
-            state.name = name ? name : state.name;
+            const { username = '', email = '', access_token = '', address = '', mobile = '', avatar = '', _id = '', isAdmin,city= '',refreshToken = '' } = action.payload
+            state.username = username ? username : state.username;
             state.email = email ? email : state.email;
             state.address = address ? address : state.address;
-            state.phone = phone ? phone : state.phone;
+            state.mobile = mobile ? mobile : state.mobile;
             state.avatar = avatar ? avatar : state.avatar;
             state.id = _id ? _id : state.id
             state.access_token = access_token ? access_token : state.access_token;
@@ -31,10 +31,10 @@ export const userSlide = createSlice({
             state.refreshToken = refreshToken ? refreshToken : state.refreshToken;
         },
         resetUser: (state) => {
-            state.name = '';
+            state.username = '';
             state.email = '';
             state.address = '';
-            state.phone = '';
+            state.mobile = '';
             state.avatar = '';
             state.id = '';
             state.access_token = '';

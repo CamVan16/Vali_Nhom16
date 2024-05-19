@@ -12,6 +12,8 @@ public class User {
     private String address;
     private String mobile;
     private String password;
+    private String access_token;
+    private String refresh_token;
 
     public User(String _id, String username, String email, String address, String mobile, String password) {
         this._id = _id;
@@ -20,6 +22,8 @@ public class User {
         this.address = address;
         this.mobile = mobile;
         this.password = password;
+        this.access_token = access_token;
+        this.refresh_token = refresh_token;
     }
 
     public User() {
@@ -32,7 +36,18 @@ public class User {
     public void set_id(String _id) {
         this._id = _id;
     }
-
+    public String getAccess_token() {
+        return access_token;
+    }
+    public String getRefresh_token() {
+        return refresh_token;
+    }
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
+    }
     public String getUsername() {
         return username;
     }
@@ -81,6 +96,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
                 ", mobile='" + mobile + '\'' +
+                ", password='" + password + '\'' +
+                ", access_token='" + access_token + '\''+
+                ", refresh_token='" + refresh_token+ '\''+
                 '}';
     }
 }
