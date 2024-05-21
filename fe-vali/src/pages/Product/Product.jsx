@@ -183,7 +183,6 @@ const ProductPages = () => {
 
   return (
     <div>
-      <Header></Header>
       <SearchBar />
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', marginLeft: '10%' }}>
         <Category onCategoryChange={handleCategoryChange} />

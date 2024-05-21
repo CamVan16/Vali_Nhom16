@@ -1,5 +1,5 @@
 import React from 'react';
-import HeaderSearchComponent from '../HeaderSearchComponent/HeaderSearchComponent';
+//import HeaderSearchComponent from '../HeaderSearchComponent/HeaderSearchComponent';
 import AppFooter from "../AppFooter/AppFooter";
 import AppHeader from "../AppHeader/AppHeader";
 

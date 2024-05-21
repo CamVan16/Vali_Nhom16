@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, message, Checkbox } from 'antd';
 import { StyleContainer, StyleRightCon, StyleInput, StyleInputPassword } from './style';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { updateUser } from '../../redux/slides/userSlide.js';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 const SignIn = () => {
     const location = useLocation();
@@ -12,21 +12,38 @@ const SignIn = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [check, setCheck] = useState(false);
+    const user = useSelector((state) => state.user)
 
+    const [check, setCheck] = useState(false);
+    useEffect(() => {
+        // Xóa trạng thái lỗi email khi người dùng thay đổi giá trị email
+        setCheck(false);
+    }, [form.getFieldValue('email')]);
     const handleSignIn = async (values) => {
         try {
             setLoading(true);
+            const values = await form.validateFields();
+            const { email, password } = values;
             const response = await fetch('http://localhost:8080/api/v1/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
             if (data._id) {
                 message.success('Login success');
+                setCheck(true);
+                const  id  = data._id; // Lấy _id từ dữ liệu trả về
+                localStorage.setItem('userID', id);
+                if (rememberMe) { // Kiểm tra trạng thái của checkbox
+                    localStorage.setItem('rememberMe', 'true');
+                    localStorage.setItem('email', email); // Lưu lại thông tin đăng nhập nếu được chọn
+                } else {
+                    localStorage.removeItem('rememberMe');
+                    localStorage.removeItem('email'); // Xóa thông tin đăng nhập nếu không được chọn
+                }
                 dispatch(updateUser(data)); // Dispatch action to update Redux state
                 if (location?.state) {
                     navigate(location.state);
@@ -52,7 +69,17 @@ const SignIn = () => {
     const onFinish = (values) => {
         handleSignIn(values);
     };
-
+    useEffect(() => {
+        const rememberMeEnabled = localStorage.getItem('rememberMe') === 'true';
+        if (rememberMeEnabled) {
+            const rememberedUsername = localStorage.getItem('email');
+            if (rememberedUsername) {
+                form.setFieldsValue({ email: rememberedUsername }); // Tự động điền tên đăng nhập vào trường nhập liệu
+                setRememberMe(true);
+            }
+        }
+    }, []);
+    
     return (
         <StyleContainer>
             <StyleRightCon>

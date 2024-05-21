@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, message } from 'antd';
-import { StyleInput, StyleContainer, StyleRightCon } from './style';
-import axios from 'axios'; // Import Axios for making HTTP requests
+//import axios from 'axios'; // Import Axios for making HTTP requests
 import { StyleInput, StyleInputPassword, StyleContainer, StyleRightCon } from './style';
 import { Link } from 'react-router-dom';
 

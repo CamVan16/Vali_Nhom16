@@ -65,7 +65,7 @@ const ChangePassword = () => {
             setOldPassword('');
             setNewPassword('');
             setConfirmNewPassword('');
-            //handleLogout();
+            handleLogout();
         } catch (error) {
             //console.error(error);
             message.error('Đã xảy ra lỗi khi cập nhật mật khẩu.');

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.*;
 import org.bson.types.ObjectId;
 
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("api/v1/user")
@@ -145,5 +146,11 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        
+        return new ResponseEntity<>(UserService.forgotPassword(email), HttpStatus.OK);
     }
 }

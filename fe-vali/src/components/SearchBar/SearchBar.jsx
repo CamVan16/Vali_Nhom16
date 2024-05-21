@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { searchProduct } from '../../redux/slides/productSlice';
 import { Input, Button } from 'antd';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 
 
 const SearchBar = () => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const handleSearch = () => {
     dispatch(searchProduct(searchTerm));
-   // window.location.href = '/ProductPages';
+    // window.location.href = '/ProductPages';
+    if (location?.state) {
+      navigate(location.state);
+    } else {
+      navigate('/ProductPages');
+    }
 
 
   };
