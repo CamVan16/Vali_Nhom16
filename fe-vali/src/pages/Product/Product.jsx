@@ -1,110 +1,3 @@
-// import React, {useState, useEffect} from 'react'
-// import CardProduct from '../../components/CardProduct/CardProduct'
-// import { Pagination } from 'antd';
-// import {StylePage, StylePagination} from './style'
-// const ProductPages = () => {
-
-//   const [products, setProducts] = useState([]);
-
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const productsPerPage = 8;
-
-//   useEffect(() => {
-//     fetch('http://localhost:8080/api/v1/product/getall')
-//       .then(response => response.json())
-//       .then(data => {
-//         setProducts(data);
-//       })
-//       .catch(error => console.error('Error fetching products:', error));
-//   }, []);
-
-//   //du lieu san pham chua duoc load thanh cong
-//   if (products.length === 0) {
-//     return <div>Loading...</div>;
-//   }
-//   const getProductsForPage = (page) => {
-//     const startIndex = (page - 1) * productsPerPage;
-//     const endIndex = startIndex + productsPerPage;
-//     return products.slice(startIndex, endIndex);
-//   };
-//   const handlePageChange = (pageNumber) => {
-//     setCurrentPage(pageNumber);
-//   };
-
-//   const currentProducts = getProductsForPage(currentPage);
-//   return (
-//     <div>
-//       <StylePage>
-//       {currentProducts.map(product => (
-//         <CardProduct key={product.id} product={product} />
-//       ))}
-//       </StylePage>
-//       <StylePagination>
-//         <Pagination current={currentPage} total={products.length} pageSize={productsPerPage} onChange={handlePageChange} />
-//       </StylePagination>
-//     </div>
-//   );
-// }
-
-// export default ProductPages
-// import React, {useState, useEffect} from 'react'
-// import CardProduct from '../../components/CardProduct/CardProduct'
-// import { Pagination } from 'antd';
-// import {StylePage, StylePagination} from './style'
-// import Category from '../../components/Category/Category';
-
-// const ProductPages = () => {
-//   const [products, setProducts] = useState([]);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [currentCategory, setCurrentCategory] = useState("Tất cả");
-//   const productsPerPage = 8;
-
-//   useEffect(() => {
-//     fetch('http://localhost:8080/api/v1/product/getall')
-//       .then(response => response.json())
-//       .then(data => {
-//         setProducts(data);
-//       })
-//       .catch(error => console.error('Error fetching products:', error));
-//   }, []);
-
-//   const filteredProducts = currentCategory === "Tất cả" ? products : products.filter(product => product.type === currentCategory);
-
-//   const getProductsForPage = (page) => {
-//     const startIndex = (page - 1) * productsPerPage;
-//     const endIndex = startIndex + productsPerPage;
-//     return filteredProducts.slice(startIndex, endIndex);
-//   };
-
-//   const handlePageChange = (pageNumber) => {
-//     setCurrentPage(pageNumber);
-//   };
-
-//   const handleCategoryChange = (value) => {
-//     setCurrentCategory(value);
-//     setCurrentPage(1); // Reset page to 1 when category changes
-//   };
-
-//   const currentProducts = getProductsForPage(currentPage);
-
-//   return (
-//     <div>
-//       <Category onCategoryChange={handleCategoryChange} />
-//       <StylePage>
-//         {currentProducts.map(product => (
-//           <CardProduct key={product.id} product={product} />
-//         ))}
-//       </StylePage>
-//       <StylePagination>
-//         <Pagination current={currentPage} total={filteredProducts.length} pageSize={productsPerPage} onChange={handlePageChange} />
-//       </StylePagination>
-//     </div>
-//   );
-// }
-
-// export default ProductPages
-
-// ProductPages.js
 import React, { useState, useEffect } from 'react';
 import CardProduct from '../../components/CardProduct/CardProduct';
 import { Pagination } from 'antd';
@@ -195,3 +88,7 @@ const ProductPages = () => {
 }
 
 export default ProductPages;
+
+
+
+

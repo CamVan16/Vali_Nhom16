@@ -24,7 +24,7 @@ const DetailProduct = () => {
     return <div>Loading...</div>;
   }
 
-  const { name, img, price, discount, description } = product;
+  const { name, img, price, discount, description, stock } = product;
   const sizes = Object.keys(price);
 
   const handleSizeClick = (size) => {
@@ -45,10 +45,12 @@ const DetailProduct = () => {
           price={price[selectedSize]}
           discount={discount}
           img={img}
-          sizes={sizes}
+          sizes={['S', 'M', 'L']}
+          stock={stock}
           description={description}
           onImageClick={setSelectedImage}
           onSizeClick={handleSizeClick}
+          selectedSize={selectedSize}
         />
         <ProductDes description={description} />
       </div>

@@ -146,7 +146,8 @@ const OrderPage = () => {
       await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
       navigate("/");
     } catch (error) {
-      message.error('Failed to place order');
+      //message.error('Failed to place order');
+      navigate("/");
       console.error('Failed to place order:', error);
     }
   };
