@@ -3,12 +3,13 @@ package com.nhom16.vali.service;
 import com.nhom16.vali.entity.User;
 import com.nhom16.vali.entity.Address;
 import com.nhom16.vali.repository.UserRepo;
+import com.nhom16.vali.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
-
+import jakarta.mail.MessagingException;
 @Service
 public class UserService {
     @Autowired
@@ -63,6 +64,12 @@ public class UserService {
         User user = repo.findByEmail(email)
                 .orElseThrow(
                         () -> new RuntimeException("User not found with this email: " + email));
-        return null;
+                        try{
+                            EmailUtil.sendSetPasswordEmail(email);
+
+                        } catch (MessagingException e){
+                            throw new RuntimeException("Unable to send set password email, please try again");
+                        }
+        return "Please check your email to set new password";
     }
 }
