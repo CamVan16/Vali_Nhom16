@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, message } from 'antd';
-import { WrapperContainer } from './style';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Button, Form, message, Checkbox } from 'antd';
+import { StyleContainer, StyleRightCon, StyleInput, StyleInputPassword } from './style';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { updateUser } from '../../redux/slides/userSlide.js';
+import { useSelector, useDispatch } from 'react-redux';
 
 const SignIn = () => {
+    const location = useLocation();
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm();
+    const [rememberMe, setRememberMe] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const handleSignIn = async () => {
+    const [form] = Form.useForm();
+    const user = useSelector((state) => state.user)
+
+    const [check, setCheck] = useState(false);
+    useEffect(() => {
+        // Xóa trạng thái lỗi email khi người dùng thay đổi giá trị email
+        setCheck(false);
+    }, [form.getFieldValue('email')]);
+    const handleSignIn = async (values) => {
         try {
             setLoading(true);
             const values = await form.validateFields();
@@ -19,62 +31,104 @@ const SignIn = () => {
                 },
                 body: JSON.stringify({ email, password }),
             });
-            if (!response.ok) {
-                throw new Error('Failed to login');
-            }
             const data = await response.json();
-            localStorage.setItem('userID', data._id);
-            navigate('/ProductPages');
+            if (data._id) {
+                message.success('Login success');
+                setCheck(true);
+                const  id  = data._id; // Lấy _id từ dữ liệu trả về
+                localStorage.setItem('userID', id);
+                if (rememberMe) { // Kiểm tra trạng thái của checkbox
+                    localStorage.setItem('rememberMe', 'true');
+                    localStorage.setItem('email', email); // Lưu lại thông tin đăng nhập nếu được chọn
+                } else {
+                    localStorage.removeItem('rememberMe');
+                    localStorage.removeItem('email'); // Xóa thông tin đăng nhập nếu không được chọn
+                }
+                dispatch(updateUser(data)); // Dispatch action to update Redux state
+                if (location?.state) {
+                    navigate(location.state);
+                } else {
+                    navigate('/UserPage');
+                }
+            } else {
+                setCheck(true);
+                message.error(data.message || 'Login fail');
+            }
         } catch (error) {
             console.error('Error during login:', error);
+            message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }
     };
+
+    const handleCheckboxChange = (e) => {
+        setRememberMe(e.target.checked);
+    };
+
+    const onFinish = (values) => {
+        handleSignIn(values);
+    };
+    useEffect(() => {
+        const rememberMeEnabled = localStorage.getItem('rememberMe') === 'true';
+        if (rememberMeEnabled) {
+            const rememberedUsername = localStorage.getItem('email');
+            if (rememberedUsername) {
+                form.setFieldsValue({ email: rememberedUsername }); // Tự động điền tên đăng nhập vào trường nhập liệu
+                setRememberMe(true);
+            }
+        }
+    }, []);
     
     return (
-        <WrapperContainer>
-            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Đăng nhập</h1>
-            <Form
-                form={form}
-                labelCol={{ span: 9 }}
-                wrapperCol={{ span: 15 }}
-            >
-                <Form.Item
-                    label="Tài khoản"
-                    name="email"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập tên tài khoản!',
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
+        <StyleContainer>
+            <StyleRightCon>
+                <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A93FF' }}>Đăng nhập</h4>
+                <Form form={form} onFinish={onFinish}>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập tên tài khoản!',
+                            },
+                        ]}
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 20 }}>
+                        <StyleInput />
+                    </Form.Item>
 
-                <Form.Item
-                    label="Mật khẩu"
-                    name="password"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập mật khẩu!',
-                        },
-                    ]}
-                >
-                    <Input.Password />
-                </Form.Item>
+                    <Form.Item
+                        label="Mật khẩu"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mật khẩu!',
+                            },
+                        ]}
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 20 }}
+                        validateStatus={check ? 'error' : ''}
+                        help={check && 'Tài khoản hoặc mật khẩu không chính xác'}>
+                        <StyleInputPassword />
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                        <Checkbox checked={rememberMe} onChange={handleCheckboxChange}>Ghi nhớ thông tin đăng nhập</Checkbox>
+                        <p><Link to="/ForgotPassword">Quên mật khẩu?</Link></p>
+                    </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 9, span: 15 }}>
-                    <Button type="primary" onClick={handleSignIn} loading={loading}>
-                        Đăng nhập
-                    </Button>
-                </Form.Item>
+                    <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
+                        <Button type="primary" htmlType="submit" loading={loading}>
+                            Đăng nhập
+                        </Button>
+                    </Form.Item>
 
-                <p>Chưa có tài khoản? <Link to="/Register">Đăng ký</Link></p>
-            </Form>
-        </WrapperContainer>
+                    <p style={{ textAlign: 'center' }}>Chưa có tài khoản? <Link to="/">Đăng ký</Link></p>
+                </Form>
+            </StyleRightCon>
+        </StyleContainer>
     );
 };
 

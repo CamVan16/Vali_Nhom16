@@ -33,6 +33,9 @@ public class UserService {
         return repo.findBy_id(_id);
     }
 
+    @Autowired
+    private JwtService jwtService;
+
     public Optional<User> authenticateUser(String email, String password) {
         Optional<User> userOptional = repo.findByEmail(email);
         if (userOptional.isPresent()) {
@@ -46,5 +49,20 @@ public class UserService {
 
     public void deleteUserById(String id) {
         repo.deleteById(id);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return repo.findByUsername(username);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return repo.findByEmail(email);
+    }
+
+    public String forgotPassword(String email) {
+        User user = repo.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("User not found with this email: " + email));
+        return null;
     }
 }

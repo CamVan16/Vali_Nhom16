@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import CardProduct from '../../components/CardProduct/CardProduct';
 import { Pagination } from 'antd';
+import { useSelector } from 'react-redux';
 import { StylePage, StylePagination } from './style';
 import Category from '../../components/Category/Category';
 import SortPrice from '../../components/SortPrice/SortPrice';
 import Header from '../../components/Header/Header';
+import SearchBar from '../../components/SearchBar/SearchBar';
 const ProductPages = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,7 +14,7 @@ const ProductPages = () => {
   const [currentPriceRange, setCurrentPriceRange] = useState("Tất cả");
   //const [sizeSGia, setSizeSGia] = useState(null);
   const productsPerPage = 8;
-
+  const searchTerm = useSelector((state) => state.product.search);
   useEffect(() => {
     fetch('http://localhost:8080/api/v1/product/getall')
       .then(response => response.json())
@@ -50,6 +52,18 @@ const ProductPages = () => {
     return filteredProductsByPrice.slice(startIndex, endIndex);
   };
 
+  // const filteredProductsBySearchTerm = searchTerm === '' ? filteredProductsByPrice :
+  //   filteredProductsByPrice.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  // // const getProductsForPage = (page) => {
+  // //   const startIndex = (page - 1) * productsPerPage;
+  // //   const endIndex = startIndex + productsPerPage;
+  // //   return filteredProductsByPrice.slice(startIndex, endIndex);
+  // // };
+  // const getProductsForPage = (page) => {
+  //   const startIndex = (page - 1) * productsPerPage;
+  //   const endIndex = startIndex + productsPerPage;
+  //   return filteredProductsBySearchTerm.slice(startIndex, endIndex);
+  // };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -69,6 +83,7 @@ const ProductPages = () => {
   return (
     <div>
       <Header></Header>
+      <SearchBar/>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', marginLeft:'10%'}}>
         <Category onCategoryChange={handleCategoryChange} />
         <div style={{ marginLeft: '10px' }}>

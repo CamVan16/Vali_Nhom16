@@ -4,9 +4,12 @@ import ProductPages from "../pages/Product/Product"
 import DetailProduct from "../pages/DetailProduct/DetailProduct";
 import CartProductPage from "../pages/CartProductPage/CartProductPage"
 import OrderPage from "../pages/OrderPage/OrderPage";
+import UserPage from "../pages/UserPage/UserPage";
+import HeaderSearchComponent from "../components/HeaderSearchComponent/HeaderSearchComponent";
+import HomePage from "../pages/HomePage/HomePage";
 export const routes = [
   {
-    path: "/",
+    path: "/SignUp",
     page: SignUp,
     //isShowHeader: true,
   },
@@ -33,6 +36,20 @@ export const routes = [
   {
     path: "/OrderPage",
     page: OrderPage,
+    //isShowHeader: true,
+  },
+  {
+    path: "/UserPage",
+    page: UserPage,
+    //isShowHeader: true,
+  },
+  {
+    path: "/Header",
+    page: HeaderSearchComponent,
+  },
+  {
+    path: "/",
+    page: HomePage,
     //isShowHeader: true,
   },
 ];

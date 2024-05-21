@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+import { useSelector } from 'react-redux';
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
@@ -9,6 +9,7 @@ export const CartProvider = ({ children }) => {
   const [cartItemCount, setCartItemCount] = useState(0); // Initialize cart item count
 
   const userID = localStorage.getItem('userID');
+  //const userID = useSelector(state => state.user.id);
   useEffect(() => {
     const fetchCartData = async () => {
       try {

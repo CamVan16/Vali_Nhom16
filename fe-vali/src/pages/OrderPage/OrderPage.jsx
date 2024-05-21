@@ -4,6 +4,7 @@ import { HomeOutlined, ShoppingCartOutlined, CreditCardOutlined, MessageOutlined
 import { useLocation } from 'react-router-dom';
 import { StyledLayout, StyledContent, StyledFooter, StyledTable } from './style';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 const OrderPage = () => {
@@ -20,6 +21,7 @@ const OrderPage = () => {
   const [notes, setNotes] = useState('');
 
   const navigate = useNavigate();
+  //const userID = useSelector(state => state.user.id);
   useEffect(() => {
     const userID = localStorage.getItem('userID');
 

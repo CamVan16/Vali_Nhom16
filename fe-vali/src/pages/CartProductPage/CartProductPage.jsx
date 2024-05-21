@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Button, notification, Select, InputNumber, Checkbox } from 'antd';
 import { useCart } from '../../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 const { Option } = Select;
 
 const CartProductPage = () => {
@@ -12,6 +12,7 @@ const CartProductPage = () => {
   const { cartItemCount } = useCart();
   const navigate = useNavigate();
   const userID = localStorage.getItem('userID');
+  //const userID = useSelector(state => state.user._id);
   useEffect(() => {
     const fetchCartItems = async () => {
       try {

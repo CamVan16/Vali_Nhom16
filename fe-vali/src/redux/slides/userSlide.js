@@ -6,11 +6,11 @@ const initialState = {
     phone: '',
     address: '',
     avatar: '',
-    access_token: '',
+    //access_token: '',
     id: '',
     isAdmin: false,
     city: '',
-    refreshToken: ''
+    //refreshToken: ''
 }
 
 export const userSlide = createSlice({
