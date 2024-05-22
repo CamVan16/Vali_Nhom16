@@ -22,8 +22,8 @@ const OrderPage = () => {
 
   const navigate = useNavigate();
   //const userID = useSelector(state => state.user.id);
+  const userID = localStorage.getItem('userID');
   useEffect(() => {
-    const userID = localStorage.getItem('userID');
 
     const fetchUser = async () => {
       try {
@@ -120,36 +120,140 @@ const OrderPage = () => {
       console.error('Failed to clear selected items:', error);
     }
   };
+
+  // const placeOrder = async () => {
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         userId: localStorage.getItem('userID'),
+  //         cartItems: selectedItems,
+  //         totalPrice: calculateTotalPrice(),
+  //         shippingCost: shippingCost,
+  //         orderTotal: calculateTotalPrice() + shippingCost,
+  //         shippingMethod: shippingMethod,
+  //         paymentMethod: paymentMethod,
+  //         shippingAddress: user ? `${selectedAddress.name} - ${selectedAddress.address} - ${selectedAddress.mobile}` : 'Loading...',
+  //         notes: notes
+  //       }),
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     const data = await response.json();
+  //     console.log(data);
+  //     message.success('Order placed successfully',5);
+  //     await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
+  //     navigate("/");
+  //   } catch (error) {
+  //     //message.error('Failed to place order');
+  //     navigate("/");
+  //     console.error('Failed to place order:', error);
+  //   }
+  // };
+  const handleVNPayReturn = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('orderId');
+    const vnpayResponseCode = params.get('vnp_ResponseCode');
+
+    if (vnpayResponseCode === '00') {
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/order/updatePaymentStatus`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId, paymentStatus: 'Đã thanh toán' }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        message.success('Order placed successfully', 5);
+        await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
+        navigate("/");
+      } catch (error) {
+        message.error('Failed to update payment status');
+        console.error('Failed to update payment status:', error);
+      }
+    } else {
+      message.error('VNPay payment failed');
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('vnp_ResponseCode')) {
+      handleVNPayReturn();
+    }
+  }, []);
+
   const placeOrder = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem('userID'),
-          cartItems: selectedItems,
-          totalPrice: calculateTotalPrice(),
-          shippingCost: shippingCost,
-          orderTotal: calculateTotalPrice() + shippingCost,
-          shippingMethod: shippingMethod,
-          paymentMethod: paymentMethod,
-          shippingAddress: user ? `${selectedAddress.name} - ${selectedAddress.address} - ${selectedAddress.mobile}` : 'Loading...',
-          notes: notes
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      const shippingStatus = 'Chưa nhận hàng';
+      const orderTotal = calculateTotalPrice() + shippingCost;
+
+      const orderData = {
+        userId: localStorage.getItem('userID'),
+        cartItems: selectedItems,
+        totalPrice: calculateTotalPrice(),
+        shippingCost: shippingCost,
+        orderTotal: orderTotal,
+        shippingMethod: shippingMethod,
+        paymentMethod: paymentMethod,
+        shippingAddress: user ? `${selectedAddress.name} - ${selectedAddress.address} - ${selectedAddress.mobile}` : 'Loading...',
+        notes: notes,
+        shippingStatus: shippingStatus,
+        paymentStatus: paymentMethod === 'Thanh toán khi nhận hàng' ? 'Đã thanh toán' : 'Chờ thanh toán',
+      };
+
+      // Nếu thanh toán qua VNPAY
+      if (paymentMethod === 'Thanh toán qua VNPAY') {
+        const response = await fetch(`http://localhost:8080/api/v1/order/createVNPAYOrder`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const createdOrder = await response.json();
+        const paymentResponse = await fetch(`http://localhost:8080/api/v1/payment/create?amount=${orderTotal}&orderId=${createdOrder.id}`);
+        if (!paymentResponse.ok) {
+          throw new Error('Failed to create payment URL');
+        }
+        const paymentData = await paymentResponse.json();
+        window.location.href = paymentData.paymentUrl;
+      } else {
+        // Nếu không phải thanh toán qua VNPAY, lưu đơn hàng ngay lập tức
+        const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        message.success('Order placed successfully', 5);
+        await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
+        navigate("/");
       }
-      const data = await response.json();
-      console.log(data);
-      message.success('Order placed successfully',5);
-      await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
-      navigate("/");
     } catch (error) {
-      //message.error('Failed to place order');
-      navigate("/");
+      message.error('Failed to place order');
       console.error('Failed to place order:', error);
     }
   };

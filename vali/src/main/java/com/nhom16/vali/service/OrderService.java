@@ -58,4 +58,15 @@ public class OrderService {
             }
         }
     }
+
+    public Order updatePaymentStatus(String orderId, String paymentStatus) {
+        Optional<Order> optionalOrder = orderRepo.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setPaymentStatus(paymentStatus);
+            return orderRepo.save(order);
+        } else {
+            throw new RuntimeException("Order not found");
+        }
+    }
 }
