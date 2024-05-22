@@ -48,7 +48,7 @@ const SignIn = () => {
                 if (location?.state) {
                     navigate(location.state);
                 } else {
-                    navigate('/UserPage');
+                    navigate('/');
                 }
             } else {
                 setCheck(true);
@@ -125,7 +125,7 @@ const SignIn = () => {
                         </Button>
                     </Form.Item>
 
-                    <p style={{ textAlign: 'center' }}>Chưa có tài khoản? <Link to="/">Đăng ký</Link></p>
+                    <p style={{ textAlign: 'center' }}>Chưa có tài khoản? <Link to="/SignUp">Đăng ký</Link></p>
                 </Form>
             </StyleRightCon>
         </StyleContainer>

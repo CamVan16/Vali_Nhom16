@@ -9,44 +9,45 @@ import HomePage from "../pages/HomePage/HomePage";
 export const routes = [
   {
     path: "/",
+    page: HomePage,
+    isShowHeader: true,
+  },
+  {
+    path: "/SignUp",
     page: SignUp,
     isShowHeader: true,
   },
   {
     path: "/SignIn",
     page: SignIn,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
   {
     path: "/ProductPages",
     page: ProductPages,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
   {
     path: "/ProductDetail/:id",
     page: DetailProduct,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
   {
     path: "/CartProductPage",
     page: CartProductPage,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
   {
     path: "/OrderPage",
     page: OrderPage,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
   {
     path: "/UserPage",
     page: UserPage,
-    //isShowHeader: true,
+    isShowHeader: true,
   },
-  {
-    path: "/",
-    page: HomePage,
-    //isShowHeader: true,
-  },
+  
 ];
 
 
