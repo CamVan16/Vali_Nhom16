@@ -29,7 +29,9 @@ public class OrderService {
     public Optional<Order> getOrderById(String id) {
         return orderRepo.findById(id);
     }
-
+    public Optional<Order> getOrderByUserId(String id) {
+        return orderRepo.findByUserId(id);
+    }
     public List<Order> getAllOrders() {
         return orderRepo.findAll();
     }

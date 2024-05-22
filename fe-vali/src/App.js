@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { routes } from './routes'; 
 import DefaultComponent from './components/Layout/Layout';
 import { useQuery } from '@tanstack/react-query';
-import HeaderSearchComponent from './components/HeaderSearchComponent/HeaderSearchComponent';
 function App() {
   return (
     <div>

@@ -43,6 +43,7 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+<<<<<<< HEAD
     // Confirm Payment for VNPAY endpoint
     @PostMapping("/confirmPayment")
     public ResponseEntity<String> confirmPayment(@RequestParam Map<String, String> allParams) {
@@ -80,5 +81,12 @@ public class OrderController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(null);
         }
+=======
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrderByUserId(@PathVariable String id) {
+        return orderService.getOrderByUserId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+>>>>>>> 301b7f1d3fb3f9f55dda57d8a81f9faff2eb4a15
     }
 }

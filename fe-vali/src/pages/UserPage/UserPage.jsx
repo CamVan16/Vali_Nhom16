@@ -9,7 +9,6 @@ import * as UserService from '../../services/UserService'
 // import { useNavigate } from 'react-router-dom';
 //import { Link } from 'react-router-dom';
 import SearchBar from '../../components/SearchBar/SearchBar';
-import Header from '../../components/Header/Header';
 const { TabPane } = Tabs;
 
 const UserPage = () => {
@@ -35,7 +34,6 @@ const UserPage = () => {
   return (
     <div style={{ width: '90%' , margin: '0 auto'}}>
       <div>
-      <Header />
       <SearchBar />
       {/* Nội dung khác */}
     </div>

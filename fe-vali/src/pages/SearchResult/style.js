@@ -1,29 +1,26 @@
-import {Row} from 'antd';
 import styled from "styled-components";
-import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-
-export const WrapperHeader = styled(Row)`
-    box-sizing: border-box;  
-    padding: 10px 15px;
-    background-color: rgb(26,147,255);
-    width: 100%;
-
-    @media (max-width: 480px) {
-    padding: 10px 0;
-  }
-`;
+import ButtonComponent from "../../components/ButtonComponent/ButtonComponent"
 
 export const WrapperButtonMore = styled(ButtonComponent)`
     &:hover{
         color: #fff;
         background: rgb(13,92,182);
-        span{
-            color: #fff;
-        }
     }
     color: rgb(11, 116, 229);
     width: 100%;
 `
+
+export const WrapperDiv = styled.div`
+  background: #fff;
+  margin: 0 120px;
+  height: fit-content;
+  width: fit-content;
+  // margin: auto auto;
+
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+`;
 
 export const WrapperProducts = styled.div`
   display: grid;
@@ -56,26 +53,5 @@ export const WrapperProducts = styled.div`
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-`;
-export const WrapperHeaderAccount = styled.div`
-    display: flex;
-    align-items: center;
-    color: #fff;
-    gap: 10px;
-    max-width: 200px;
 `
 
-export const WrapperTextHeaderSmall = styled.span`
-    font-size: 12px;
-    color: #fff;
-    white-space: nowrap;
-`
-
-export const WrapperContentPopup = styled.p`
-    cursor: pointer;
-    &:hover {
-        color: rgb(26, 148, 255);
-    }
-`;

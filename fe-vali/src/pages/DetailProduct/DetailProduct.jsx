@@ -3,7 +3,6 @@ import ProductImage from '../../components/ProductImage/ProductImage';
 import ProductInfo from '../../components/ProductInfo/ProductInfo';
 import ProductDes from '../../components/ProductDes/ProductDes';
 import { useParams } from 'react-router-dom';
-import Header from '../../components/Header/Header';
 const DetailProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -33,7 +32,6 @@ const DetailProduct = () => {
 
   return (
     <div>
-        <Header></Header>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: '20px', margin: '0 auto', maxWidth: '1200px' }}>
       <div style={{ flex: 1 }}>
         <ProductImage selectedImage={selectedImage} />
