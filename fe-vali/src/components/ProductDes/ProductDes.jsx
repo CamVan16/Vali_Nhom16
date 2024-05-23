@@ -2,7 +2,7 @@ import React from 'react';
 
 const ProductDes = ({ description }) => {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px' }}>
       <tbody>
         <tr>
           <td style={{ border: '1px solid #ddd', padding: '8px', fontWeight: 'bold' }}>Thương hiệu</td>

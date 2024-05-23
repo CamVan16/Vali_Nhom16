@@ -30,7 +30,7 @@ body {
   .header {
     display: flex;
     align-items: center;
-    background-color: #1890ff; 
+    background-color: #00A86B; 
     padding: 0px 20px;
     height: fit-content;
   }

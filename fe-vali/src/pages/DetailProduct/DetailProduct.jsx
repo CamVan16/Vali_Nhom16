@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProductImage from '../../components/ProductImage/ProductImage';
 import ProductInfo from '../../components/ProductInfo/ProductInfo';
 import ProductDes from '../../components/ProductDes/ProductDes';
+import { SideSection, SizeButton, Container, ProductContainer } from './style';
 import { useParams } from 'react-router-dom';
 const DetailProduct = () => {
   const { id } = useParams();
@@ -31,30 +32,29 @@ const DetailProduct = () => {
   };
 
   return (
-    <div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: '20px', margin: '0 auto', maxWidth: '1200px' }}>
-      <div style={{ flex: 1 }}>
-        <ProductImage selectedImage={selectedImage} />
-      </div>
-      <div style={{ flex: 1 }}>
-        <ProductInfo
-          id = {id}
-          name={name}
-          price={price[selectedSize]}
-          discount={discount}
-          img={img}
-          sizes={['S', 'M', 'L']}
-          stock={stock}
-          description={description}
-          onImageClick={setSelectedImage}
-          onSizeClick={handleSizeClick}
-          selectedSize={selectedSize}
-        />
-        <ProductDes description={description} />
-      </div>
-    </div>
-    </div>
-    
+    <Container>
+      <ProductContainer>
+        <SideSection>
+          <ProductImage selectedImage={selectedImage} />
+        </SideSection>
+        <SideSection>
+          <ProductInfo
+            id={id}
+            name={name}
+            price={price[selectedSize]}
+            discount={discount}
+            img={img}
+            sizes={sizes}
+            stock={stock}
+            description={description}
+            onImageClick={setSelectedImage}
+            onSizeClick={handleSizeClick}
+            selectedSize={selectedSize}
+          />
+          <ProductDes description={description} />
+        </SideSection>
+      </ProductContainer>
+    </Container>
   );
 };
 
