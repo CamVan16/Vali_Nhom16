@@ -29,7 +29,7 @@ const SearchBar = () => {
         placeholder="Tìm kiếm sản phẩm"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ width: 200, marginRight: '10px' }}
+        style={{ width: 200, marginRight: '10px', backgroundColor: 'rgb(0, 168, 106)', color:'black' }}
       />
       <Button type="primary" onClick={handleSearch}>
         Tìm kiếm

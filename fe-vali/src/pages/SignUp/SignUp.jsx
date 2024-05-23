@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Form, message } from 'antd';
-//import axios from 'axios'; // Import Axios for making HTTP requests
-import { StyleInput, StyleInputPassword, StyleContainer, StyleRightCon } from './style';
-import { Link } from 'react-router-dom';
+import { StyleInput, StyleContainer, StyleRightCon, StyleInputPassword } from './style';
+import axios from 'axios';
+import bcrypt from 'bcryptjs';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
-        address: '',
+        //address: '',
         mobile: '',
         password: '',
         confirmPassword: ''
@@ -37,59 +37,23 @@ const SignUp = () => {
             return;
         }
 
+        const { username, email, mobile, password } = formData;
+        //const hashedNewPassword = await bcrypt.hash(password, 10); 
+
+        const userData = {
+            username,
+            email,
+            //addresses: [{ name: username, address, mobile }],
+            mobile,
+            //password: hashedNewPassword,
+            password
+        };
+
         try {
-            const response = await fetch('http://localhost:8080/api/v1/user/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const text = await response.text();
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (error) {
-                throw new Error('Invalid JSON response: ' + text);
-            }
-
-            if (response.ok) {
-                if (data.status === 'ERR') {
-                    if (data.message.includes('username')) {
-                        setUsernameExistError(false);
-                        setEmailExistError(true);
-                        setPasswordMatch(true);
-                        setvalidatePass(true);
-                    } else if (data.message.includes('email')) {
-                        setEmailExistError(false);
-                        setUsernameExistError(true);
-                        setPasswordMatch(true);
-                        setvalidatePass(true);
-                    } else if (data.message.includes('password')) {
-                        setPasswordMatch(false);
-                        setEmailExistError(true);
-                        setUsernameExistError(true);
-                        setvalidatePass(true);
-                    } else {
-                        message.error(data.message);
-                    }
-                } else {
-                    setFormData({
-                        username: '',
-                        email: '',
-                        mobile: '',
-                        address: '',
-                        password: '',
-                        confirmPassword: '',
-                    });
-                    // Redirect to SignIn page
-                    window.location.href = '/SignIn';
-                }
-            } else {
-                message.error(data.message || 'Đã có lỗi xảy ra');
-            }
-
+            const response = await axios.post('http://localhost:8080/api/v1/user/save', userData);
+            console.log(response.data);
+            message.success('User registered successfully!');
+            window.location.href = '/SignIn';
         } catch (error) {
             console.error('Error:', error);
             message.error('Registration failed! ' + error.message);
@@ -131,21 +95,19 @@ const SignUp = () => {
                         <StyleInput name="email" value={formData.email} onChange={handleChange} />
                         {!emailExistError && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Email đã tồn tại</p>}
                     </Form.Item>
-
-                    <Form.Item
-                        label="Số điện thoại"
-                        name="mobile"
+                    {/* <Form.Item
+                        label="Địa chỉ"
+                        name="address"
                         rules={[
                             {
                                 required: true,
                                 message: 'Please input your phone!',
                             },
                         ]}
-                        labelCol={{ span: 7 }}
-                        wrapperCol={{ span: 17 }}>
-                        <StyleInput name="mobile" value={formData.mobile} onChange={handleChange} />
-                    </Form.Item>
-
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}>
+                        <StyleInput name="address" onChange={handleChange} />
+                    </Form.Item> */}
                     <Form.Item
                         label="Địa chỉ"
                         name="address"

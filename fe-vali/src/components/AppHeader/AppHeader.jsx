@@ -1,21 +1,24 @@
-// import React, { useState, useEffect } from "react";
-// import { Layout, Menu, Dropdown, Button, Input, Popover, Badge } from "antd";
-// import {
-//   MenuOutlined,
-//   ShoppingCartOutlined,
-//   UserOutlined,
-// } from "@ant-design/icons";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import { searchProduct as searchProductAction } from "../../redux/slides/productSlice";
-// import { resetUser } from "../../redux/slides/userSlide";
-// //import { resetCart } from "../../redux/slides/cartSlide";
-// import * as UserService from "../../services/UserService";
-// import axios from "axios";
-// import "./style.css";
-// import { WrapperContentPopup } from "./style";
-// import { FaUserCircle } from "react-icons/fa";
-// const { Header } = Layout;
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Dropdown, Button, Input, Popover, Badge } from "antd";
+import {
+    MenuOutlined,
+    ShoppingCartOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { searchProduct as searchProductAction } from "../../redux/slides/productSlice";
+import { resetUser } from "../../redux/slides/userSlide";
+//import { resetCart } from "../../redux/slides/cartSlide";
+import * as UserService from "../../services/UserService";
+import axios from "axios";
+import "./style.css";
+import { WrapperContentPopup ,  StyledButton} from "./style";
+//import { FaUserCircle } from "react-icons/fa";
+import SearchBar from "../SearchBar/SearchBar";
+import CardProduct from '../../components/CardProduct/CardProduct';
+
+const { Header } = Layout;
 
 // const AppHeader = () => {
 //   const dispatch = useDispatch();
@@ -60,50 +63,43 @@
 //     setSearch(e.target.value);
 //   };
 
-//   const onSearch = (value) => {
-//     if (!value.trim()) return;
-//     dispatch(searchProductAction(value));
-//     navigate(`/search-results?query=${encodeURIComponent(value)}`);
-//   };
 
-//   // Navigate to cart page
-//   const goToCart = () => {
-//     navigate("/cart", { state: location.pathname });
-//   };
+
+
 
 //   const handleNavigateLogin = () => {
 //     console.log(location);
 //     navigate("/signin", { state: location.pathname });
 //   };
 
-//   const handleClickNavigate = (type) => {
-//     if (type === "UserPage") {
-//       navigate("/UserPage");
-//     } else if (type === "admin") {
-//       navigate("/system/admin");
-//     } else if (type === "my-order") {
-//       navigate("/my-order", {
-//         state: {
-//           id: user?.id,
-//           token: user?.access_token,
-//         },
-//       });
-//     } else {
-//       handleLogout();
-//     }
-//     setIsOpenPopup(false);
-//   };
+    const handleClickNavigate = (type) => {
+        if (type === "UserPage") {
+            navigate("/UserPage");
+        } else if (type === "admin") {
+            navigate("/system/admin");
+        } else if (type === "my-order") {
+            navigate("/my-order", {
+                state: {
+                    id: user?.id,
+                    //token: user?.access_token,
+                },
+            });
+        } else {
+            handleLogout();
+        }
+        setIsOpenPopup(false);
+    };
 
-//   const handleLogout = async () => {
-//     setLoading(true);
-//     // await UserService.logoutUser()
-//     localStorage.removeItem("accessToken");
-//     localStorage.removeItem("refreshToken");
-//     dispatch(resetUser());
-//     dispatch(resetCart());
-//     setLoading(false);
-//     navigate("/");
-//   };
+    const handleLogout = async () => {
+        setLoading(true);
+        // await UserService.logoutUser()
+        //localStorage.removeItem("accessToken");
+        //localStorage.removeItem("refreshToken");
+        dispatch(resetUser());
+        //dispatch(resetCart());
+        setLoading(false);
+        navigate("/");
+    };
 
 //   const handleClickCategory = (name) => {
 //     // console.log(name)
@@ -137,117 +133,116 @@
 //     </div>
 //   );
 
-//   return (
-//     <Header
-//       className="header"
-//       style={{
-//         display: "flex",
-//         justifyContent: "space-between",
-//         alignItems: "center",
-//         gap: "16px",
-//       }}
-//     >
-//       <div
-//         className="logo"
-//         onClick={() => {
-//           navigate("/");
-//         }}
-//       >
-//         <img src="/logo_with_text.png" alt="" />
-//       </div>
-//       <Dropdown menu={{ items: categoryItems }} trigger={["click"]} style={{ flex: 1 }}>
-//         <Button style={{ display: "flex", alignItems: "center" }}>
-//           <MenuOutlined />
-//           Danh mục
-//         </Button>
-//       </Dropdown>
-//       <Input.Search
-//         style={{ flex: 2 }}
-//         placeholder="Bạn cần tìm gì?"
-//         value={search}
-//         onChange={onChange}
-//         onSearch={onSearch}
-//         enterButton
-//       />
-//       <div
-//         style={{
-//           flex: 1,
-//           display: "flex",
-//           justifyContent: "flex-end",
-//           alignItems: "center",
-//           gap: "48px",
-//         }}
-//       >
-//         <Badge count={cart?.orderItems?.length} size="small">
-//           <ShoppingCartOutlined
-//             style={{ fontSize: "36px", color: "#fff" }}
-//             onClick={goToCart}
-//           />
-//         </Badge>
-//         {user?.access_token ? (
-//           <>
-//             {console.log("is admin? : ", user?.isAdmin)}
-//             <Popover content={content} trigger="click" open={isOpenPopup}>
-//               <div
-//                 style={{
-//                   cursor: "pointer",
-//                   maxWidth: 150,
-//                   overflow: "hidden",
-//                   textOverflow: "ellipsis",
-//                   display: "flex",
-//                 }}
-//                 onClick={() => setIsOpenPopup((prev) => !prev)}
-//               >
-//                 <div
-//                   style={{
-//                     width: "36px",
-//                     height: "36px",
-//                     objectFit: "cover",
-//                     marginRight: "16px",
-//                     borderRadius: "50%",
-//                   }}
-//                 >
-//                   {user?.avatar ? (
-//                     <img src={user?.avatar} alt="" />
-//                   ) : (
-//                     <FaUserCircle
-//                       style={{
-//                         width: "inherit",
-//                         height: "inherit",
-//                         color: "#fff",
-//                       }}
-//                     />
-//                   )}
-//                 </div>
-//                 <span style={{ color: "#fff" }}>
-//                   {userName?.length ? userName : user?.email}
-//                 </span>
-//               </div>
-//             </Popover>
-//           </>
-//         ) : (
-//           <div
-//             style={{
-//               cursor: "pointer",
-//               maxWidth: 150,
-//               overflow: "hidden",
-//               textOverflow: "ellipsis",
-//               padding: "8px 16px",
-//               backgroundColor: "#fff",
-//               maxHeight: 36,
-//               borderRadius: "8px",
-//               display: "flex",
-//               justifyContent: "center",
-//               alignItems: "center",
-//             }}
-//             onClick={handleNavigateLogin}
-//           >
-//             <span style={{ color: "#000" }}>Đăng nhập</span>
-//           </div>
-//         )}
-//       </div>
-//     </Header>
-//   );
-// };
+    return (
+        <Header
+            className="header"
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "16px",
+            }}
+        >
+            <div
+                className="logo"
+                onClick={() => {
+                    navigate("/");
+                }}
+            >
+                <img src="https://www.shutterstock.com/image-vector/vintage-retro-travel-bag-silhouette-260nw-2161476513.jpg" alt="" />
+            </div>
+                <div>LUGKY</div>
+            <SearchBar
+                style={{
+                    flex: 2
+                }}
+            placeholder="Bạn cần tìm gì?"
+            value={search}
+            onChange={onChange}
+                //onSearch={onSearch}
+            enterButton
+            />
+            < StyledButton onClick={handleNavigateStore}> Sản phẩm</ StyledButton>
+            <div
+                style={{
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: "48px",
+                }}
+            >
+                {/* <Badge count={cart?.orderItems?.length}  size="small">
+                    <ShoppingCartOutlined
+                        style={{ fontSize: "36px", color: "#fff" }}
+                        onClick={goToCart}
+                    />
+                </Badge> */}
+                {/* <CardProduct /> */}
+                {user?._id ? (
+                    <>
+                        {console.log("is admin? : ", user?.isAdmin)}
+                        <Popover content={content} trigger="click" open={isOpenPopup}>
+                            <div
+                                style={{
+                                    cursor: "pointer",
+                                    maxWidth: 150,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    display: "flex",
+                                }}
+                                onClick={() => setIsOpenPopup((prev) => !prev)}
+                            >
+                                <div
+                                    style={{
+                                        width: "36px",
+                                        height: "36px",
+                                        objectFit: "cover",
+                                        marginRight: "16px",
+                                        borderRadius: "50%",
+                                    }}
+                                >
+                                    {/* {user?.avatar ? (
+                    <img src={user?.avatar} alt="" />
+                  ) : (
+                    <FaUserCircle
+                      style={{
+                        width: "inherit",
+                        height: "inherit",
+                        color: "#fff",
+                      }}
+                    />
+                  )} */}
+                                </div>
+                                <span style={{ color: "#fff" }}>
+                                    {userName?.length ? userName : user?.email}
+                                </span>
+                            </div>
+                        </Popover>
+                    </>
+                ) : (
+                    <div
+                        style={{
+                            cursor: "pointer",
+                            maxWidth: 150,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            padding: "8px 16px",
+                            backgroundColor: "#fff",
+                            maxHeight: 36,
+                            borderRadius: "8px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                        onClick={handleNavigateLogin}
+                    >
+                        <span style={{ color: "#000" }}>Đăng nhập</span>
+                    </div>
+                )}
+            </div>
+        </Header>
+    );
+};
 
 // export default AppHeader;
