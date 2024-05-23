@@ -48,7 +48,7 @@ const SignIn = () => {
                 if (location?.state) {
                     navigate(location.state);
                 } else {
-                    navigate('/');
+                    navigate('/UserPage');
                 }
             } else {
                 setCheck(true);

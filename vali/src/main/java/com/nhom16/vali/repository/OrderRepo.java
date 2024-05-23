@@ -4,12 +4,12 @@ import com.nhom16.vali.entity.Order;
 import com.nhom16.vali.entity.User;
 
 import java.util.Optional;
-
+import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepo extends MongoRepository<Order, String> {
-        Optional<Order> findByUserId(String userId);
+        Optional<List<Order>> findByUserId(String userId);
 
 }

@@ -82,6 +82,7 @@ public class UserController {
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setAddresses(updatedUser.getAddresses());
             existingUser.setMobile(updatedUser.getMobile());
+            existingUser.setPassword(updatedUser.getPassword());
             userService.saveOrUpdate(existingUser);
             return ResponseEntity.ok(existingUser);
         } else {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
-import jakarta.mail.MessagingException;
+//import jakarta.mail.MessagingException;
 
 @Service
 public class UserService {

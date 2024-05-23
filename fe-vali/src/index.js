@@ -10,8 +10,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { CartProvider } from './contexts/CartContext';  // Import the CartProvider
 
 const queryClient = new QueryClient();
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-ReactDOM.render(
+root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <CartProvider>  
@@ -20,7 +21,7 @@ ReactDOM.render(
     </Provider>
     <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
   </QueryClientProvider>, 
-  document.getElementById('root')
+  //document.getElementById('root')
 );
 
 reportWebVitals();

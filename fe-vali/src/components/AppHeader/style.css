@@ -11,28 +11,17 @@ body {
     text-decoration: none;
   }
   
-  .Menu {
-    border-right: none;
-  }
   
   
-  .ant-menu-item,
-  .ant-menu-submenu-title {
-    color: rgba(0, 0, 0, 0.65);
-  }
   
-  .ant-menu-item:hover,
-  .ant-menu-submenu-title:hover {
-    background-color: #e6f7ff;
-    color: #1890ff;
-  }
   
   .header {
     display: flex;
     align-items: center;
-    background-color: #1890ff; 
+    background-color:  #00a86b; 
     padding: 0px 20px;
     height: fit-content;
+    font-size: 18px;
   }
   
   .header .logo {
@@ -44,6 +33,10 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+  }
+  .header .logo:hover{
+    opacity: 0.8;
   }
   .header .logo img {
     width: inherit;
@@ -67,4 +60,7 @@ body {
     margin-right: 20px; /* Khoảng cách giữa các menu items */
   }
   
-  
+  .hover-opacity:hover {
+    opacity: 0.8; 
+    background-color: #02ce83;
+}

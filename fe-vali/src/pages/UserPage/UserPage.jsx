@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { Tabs, Button } from 'antd';
 import UserInfor from '../../components/UserInfor/UserInfor';
 import ChangePassword from '../../components/ChangePassword/ChangePassword';
-//import OrderHis from '../../components/OrderHis/OrderHis';
+import OrderHis from '../../components/OrderHis/OrderHis';
 import * as UserService from '../../services/UserService'
 // import { useDispatch } from 'react-redux';
 // import { updateUser } from '../../redux/slices/userSlide';
 // import { useNavigate } from 'react-router-dom';
 //import { Link } from 'react-router-dom';
-import SearchBar from '../../components/SearchBar/SearchBar';
 const { TabPane } = Tabs;
 
 const UserPage = () => {
@@ -34,8 +33,7 @@ const UserPage = () => {
   return (
     <div style={{ width: '90%' , margin: '0 auto'}}>
       <div>
-      <SearchBar />
-      {/* Nội dung khác */}
+      
     </div>
       <Tabs activeKey={selectedTab} onChange={handleTabChange} type="card">
          <TabPane tab="Thông tin người dùng" key="userInfo" >
@@ -44,9 +42,9 @@ const UserPage = () => {
         <TabPane tab="Thay đổi mật khẩu" key="changePassword">
           <ChangePassword />
         </TabPane>
-        {/*<TabPane tab="Lịch sử đơn hàng" key="orderHistory">
+        <TabPane tab="Lịch sử đơn hàng" key="orderHistory">
           <OrderHis />
-        </TabPane> */}
+        </TabPane>
         <TabPane>
           <Button type="primary" onClick={handleLogout}>Đăng xuất</Button>
         </TabPane>
