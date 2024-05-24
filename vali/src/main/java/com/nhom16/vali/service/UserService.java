@@ -5,6 +5,7 @@ import com.nhom16.vali.entity.Address;
 import com.nhom16.vali.repository.UserRepo;
 //import com.nhom16.vali.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +17,21 @@ public class UserService {
     @Autowired
     private UserRepo repo;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public void saveOrUpdate(User user) {
         if (user.getAddresses() != null) {
             for (Address address : user.getAddresses()) {
                 if (address.getId() == null || address.getId().isEmpty()) {
-                    address.setId(new ObjectId().toString()); // Set ID if null or empty
+                    address.setId(new ObjectId().toString());
                 }
             }
         }
+
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         repo.save(user);
     }
 
@@ -42,7 +50,10 @@ public class UserService {
         Optional<User> userOptional = repo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (user.getPassword().equals(password)) {
+            // if (user.getPassword().equals(password)) {
+            // return Optional.of(user);
+            // }
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 return Optional.of(user);
             }
         }

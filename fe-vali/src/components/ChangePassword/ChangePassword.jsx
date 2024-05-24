@@ -11,10 +11,10 @@ const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const user = useSelector(state => state.user);
-    const userId = useSelector(state => state.user.id);
-
+    //const userId = useSelector(state => state.user.id);
+    const userId = localStorage.getItem("userID");
     //console.log(user); 
-    console.log(userId);
+    //console.log(userId);
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'oldPassword') setOldPassword(value);
