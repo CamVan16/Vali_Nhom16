@@ -6,6 +6,7 @@ import CartProductPage from "../pages/CartProductPage/CartProductPage"
 import OrderPage from "../pages/OrderPage/OrderPage";
 import UserPage from "../pages/UserPage/UserPage";
 import HomePage from "../pages/HomePage/HomePage";
+import AdminPage from "../pages/AdminPage/AdminPage";
 export const routes = [
   {
     path: "/",
@@ -47,7 +48,11 @@ export const routes = [
     page: UserPage,
     isShowHeader: true,
   },
-  
+  {
+    path: "/AdminPage",
+    page: AdminPage,
+    isShowHeader: true,
+  },
 ];
 
 

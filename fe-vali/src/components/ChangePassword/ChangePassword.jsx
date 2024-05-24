@@ -1,101 +1,97 @@
 import React, { useState } from 'react';
 import { Button, Form, message } from 'antd';
 import { WrapperContainer, StyleInputPassword } from './style';
-import { useSelector } from 'react-redux';
-import * as UserService from '../../services/UserService'
 
 const ChangePassword = () => {
-    
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [oldPassword, setOldPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const user = useSelector(state => state.user);
-    //const userId = useSelector(state => state.user.id);
-    const userId = localStorage.getItem("userID");
-    //console.log(user); 
-    //console.log(userId);
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        if (name === 'oldPassword') setOldPassword(value);
-        else if (name === 'newPassword') setNewPassword(value);
-        else if (name === 'confirmNewPassword') setConfirmNewPassword(value);
-    };
-    const handleLogout = async () => {
-        try {
-            await UserService.logoutUser();
-            window.location.href = '/SignIn';
-        } catch (error) {
-            console.error('Lỗi khi đăng xuất:', error);
-        }
-    };
+  const userID = localStorage.getItem('userID');
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'oldPassword') setOldPassword(value);
+    else if (name === 'newPassword') setNewPassword(value);
+    else if (name === 'confirmNewPassword') setConfirmNewPassword(value);
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (newPassword !== confirmNewPassword) {
-            message.error('Mật khẩu mới và nhập lại mật khẩu mới không khớp.');
-            return;
-        }
+  const handleLogout = async () => {
+    try {
+      
+      window.location.href = '/SignIn';
+    } catch (error) {
+      console.error('Lỗi khi đăng xuất:', error);
+    }
+  };
 
-        try {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    if (newPassword !== confirmNewPassword) {
+      message.error('Mật khẩu mới và nhập lại mật khẩu mới không khớp.');
+      return;
+    }
 
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/user/getById/${userID}`);
+      const userData = await response.json();
 
-            const NewPassword = newPassword;
-            console.log(NewPassword);
+      if (userData.password !== oldPassword) {
+        message.error('Mật khẩu cũ không đúng.');
+        return;
+      }
 
-            // Cập nhật mật khẩu mới
-            const updateUser = {
-                ...user,
-                password: NewPassword,
-            };
-            console.log(updateUser);
+      const updateUser = {
+        ...userData,
+        password: newPassword,
+      };
 
-            // Gửi request PUT để cập nhật mật khẩu mới
-            await fetch(`http://localhost:8080/api/v1/user/update/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updateUser), // Gửi dữ liệu cập nhật
-            });
-            console.log(updateUser);
-            message.success('Cập nhật mật khẩu thành công.');
-            setOldPassword('');
-            setNewPassword('');
-            setConfirmNewPassword('');
-            handleLogout();
-        } catch (error) {
-            //console.error(error);
-            message.error('Đã xảy ra lỗi khi cập nhật mật khẩu.');
-        }
-    };
+      await fetch(`http://localhost:8080/api/v1/user/update/${userID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateUser),
+      });
 
-    return (
-        <div>
-            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Chỉnh sửa mật khẩu</h1>
-            <WrapperContainer>
-                <Form onSubmit={handleSubmit} name="basic" labelCol={{ span: 8, }} wrapperCol={{ span: 16, }} style={{ maxWidth: 600, }}>
-                    <Form.Item label="Mật khẩu cũ" >
-                        <StyleInputPassword type="password" name="oldPassword" value={oldPassword} onChange={handleChange} />
-                    </Form.Item>
+      message.success('Cập nhật mật khẩu thành công.');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      handleLogout();
+    } catch (error) {
+      console.error(error);
+      message.error('Đã xảy ra lỗi khi cập nhật mật khẩu.');
+    }
+  };
 
-                    <Form.Item label="Mật khẩu mới" >
-                        <StyleInputPassword type="password" name="newPassword" value={newPassword} onChange={handleChange} />
-                    </Form.Item>
+  return (
+    <div>
+      <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Chỉnh sửa mật khẩu</h1>
+      <WrapperContainer>
+        <Form onSubmit={handleSubmit} name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ maxWidth: 600 }}>
+          <Form.Item label="Mật khẩu cũ">
+            <StyleInputPassword type="password" name="oldPassword" value={oldPassword} onChange={handleChange} />
+          </Form.Item>
 
-                    <Form.Item label="Nhập lại mật khẩu mới" >
-                        <StyleInputPassword type="password" name="confirmNewPassword" value={confirmNewPassword} onChange={handleChange} />
-                    </Form.Item>
+          <Form.Item label="Mật khẩu mới">
+            <StyleInputPassword type="password" name="newPassword" value={newPassword} onChange={handleChange} />
+          </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <div onClick={handleSubmit}><Button type="primary" htmlType="submit">Cập nhật mật khẩu</Button></div>
-                    </Form.Item>
-                </Form>
-            </WrapperContainer>
-        </div>
-    );
+          <Form.Item label="Nhập lại mật khẩu mới">
+            <StyleInputPassword type="password" name="confirmNewPassword" value={confirmNewPassword} onChange={handleChange} />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <div onClick={handleSubmit}>
+              <Button type="primary" htmlType="submit">Cập nhật mật khẩu</Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </WrapperContainer>
+    </div>
+  );
 };
 
 export default ChangePassword;

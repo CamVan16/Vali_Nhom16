@@ -7,8 +7,8 @@ const OrderHistory = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const userId = useSelector(state => state.user.id);
-  
+  const userId = localStorage.getItem('userID');
+
   const columns = [
     {
       title: 'ID',
@@ -63,7 +63,7 @@ const OrderHistory = () => {
   const fetchOrderHistory = async () => {
     try {
       //await fetchUserId();
-      const response = await fetch(`http://localhost:3001/api/OrderDetail/get-all-userOrder/${userId}`);
+      const response = await fetch(`http://localhost:8080/api/v1/order/${userId}`);
       const data = await response.json();
       setOrderHistory(data.data);
       setLoading(false);
