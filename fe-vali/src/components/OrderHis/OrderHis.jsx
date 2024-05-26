@@ -1,47 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Modal, Button, Row, Col, Space, List, Typography, Image } from 'antd';
-import { useSelector } from 'react-redux';
+import { Table, Modal, Button, List, Typography, Space, Row, Col, Image } from 'antd';
+
 const OrderHistory = () => {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [productDetails, setProductDetails] = useState({});
   const userId = localStorage.getItem('userID');
 
   const columns = [
     {
       title: 'ID',
-      dataIndex: '_id',
-      key: '_id',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Sản phẩm',
-      dataIndex: 'orderItems',
-      key: 'orderItems',
-      render: (orderItems) => (
+      dataIndex: 'cartItems',
+      key: 'cartItems',
+      render: (cartItems) => (
         <span>
-          {orderItems.map((item) => (
-            <div key={item._id}>{item.name}</div>
+          {cartItems.map((item) => (
+            <div key={item.id}>{productDetails[item.productId]?.name || item.productId}</div>
           ))}
         </span>
       ),
     },
     {
       title: 'Tổng tiền',
-      dataIndex: 'totalPrice',
-      key: 'totalPrice',
-      render: (totalPrice) => totalPrice.toLocaleString('vi-VN' , { style: 'currency', currency: 'VND' }).replace('₫', 'VND'),
+      dataIndex: 'orderTotal',
+      key: 'orderTotal',
+      render: (orderTotal) => orderTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VND'),
     },
     {
-      title: 'Ngày đặt',
-      dataIndex: 'paidAt',
-      key: 'paidAt',
+      title: 'Phương thức thanh toán',
+      dataIndex: 'paymentMethod',
+      key: 'paymentMethod',
     },
     {
-      title: 'Ngày giao',
-      dataIndex: 'deliveredAt',
-      key: 'deliveredAt',
+      title: 'Trạng thái giao hàng',
+      dataIndex: 'shippingStatus',
+      key: 'shippingStatus',
     },
     {
       title: '',
@@ -58,23 +58,47 @@ const OrderHistory = () => {
     fetchOrderHistory();
   }, [userId]);
 
-  
-
   const fetchOrderHistory = async () => {
     try {
-      //await fetchUserId();
-      const response = await fetch(`http://localhost:8080/api/v1/order/${userId}`);
+      const response = await fetch(`http://localhost:8080/api/v1/order/orderHis/${userId}`);
       const data = await response.json();
-      setOrderHistory(data.data);
+      setOrderHistory(data);
+      fetchProductDetails(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching order history:', error);
     }
   };
 
+  const fetchProductDetails = async (orders) => {
+    const details = {};
+    const uniqueProductIds = new Set();
+
+    orders.forEach(order => {
+      order.cartItems.forEach(item => {
+        uniqueProductIds.add(item.productId);
+      });
+    });
+
+    for (const productId of uniqueProductIds) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/product/get/${productId}`);
+        if (response.ok) {
+          const productData = await response.json();
+          details[productId] = productData;
+        } else {
+          throw new Error(`Failed to fetch details for product ID ${productId}`);
+        }
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      }
+    }
+
+    setProductDetails(details);
+  };
+
   const handleOpenModal = (record) => {
     setSelectedOrder(record);
-    setSelectedOrderId(record._id);
     setModalVisible(true);
   };
 
@@ -83,13 +107,13 @@ const OrderHistory = () => {
   };
 
   return (
-    <div style={{ }}>
+    <div>
       <h1>Lịch sử mua hàng</h1>
-      <Table columns={columns} dataSource={orderHistory} loading={loading} rowKey="_id" />
+      <Table columns={columns} dataSource={orderHistory} loading={loading} rowKey="id" />
 
       <Modal
-        title={`Chi tiết đơn hàng #${selectedOrderId}`}
-        open={modalVisible}
+        title={`Chi tiết đơn hàng #${selectedOrder?.id}`}
+        visible={modalVisible}
         onCancel={handleCloseModal}
         footer={null}
         width={700}
@@ -102,38 +126,38 @@ const OrderHistory = () => {
               renderItem={(item) => (
                 <List.Item>
                   <List.Item.Meta
-                    title={<Typography.Title level={5} >Địa chỉ giao hàng</Typography.Title>}
+                    title={<Typography.Title level={5}>Địa chỉ giao hàng</Typography.Title>}
                   />
                   <Space direction="vertical">
                     <Row gutter={[16, 16]}>
-                      <Col span={12} className="left-align">Họ và tên:</Col>
-                      <Col span={12} className="left-align">{item.fullName}</Col>
-                      <Col span={12} className="left-align">Địa chỉ:</Col>
-                      <Col span={12} className="left-align">{item.address}</Col>
-                      <Col span={12} className="left-align">Số điện thoại:</Col>
-                      <Col span={12} className="left-align">{item.phone.toString().replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')}</Col>
+                      <Col span={24}>{item}</Col>
                     </Row>
                   </Space>
                 </List.Item>
               )}
             />
-            {<Typography.Title level={5}>Danh sách sản phẩm</Typography.Title>}
-
+            <Typography.Title level={5}>Danh sách sản phẩm</Typography.Title>
             <List
               itemLayout="horizontal"
-              dataSource={selectedOrder.orderItems}
-              renderItem={(item) => (
-                <List.Item key={item.idProduct}>
-                  <List.Item.Meta
-                    avatar={<Image src={item.img} alt={item.name} width={100} />}
-                    title={item.name}
-                  />
-                  <Space direction="vertical">
-                    <p>Số lượng: {item.amount}</p>
-                    <p>Giá: {item.price.toLocaleString()} VND</p>
-                  </Space>
-                </List.Item>
-              )}
+              dataSource={selectedOrder.cartItems}
+              renderItem={(item) => {
+                const product = productDetails[item.productId];
+                if (!product) return null;
+
+                return (
+                  <List.Item key={item.id}>
+                    <List.Item.Meta
+                      avatar={<Image src={product.img[item.color]} alt={product.name} width={50} />}
+                      title={product.name}
+                    />
+                    <Space direction="vertical">
+                      <p>Màu sắc: {item.color}</p>
+                      <p>Kích cỡ: {item.size}</p>
+                      <p>Số lượng: {item.quantity}</p>
+                    </Space>
+                  </List.Item>
+                );
+              }}
             />
 
             <List
@@ -144,18 +168,18 @@ const OrderHistory = () => {
                   <List.Item.Meta title={item.title} />
                   <Space direction="vertical">
                     <Row gutter={[16, 16]}>
-                      <Col span={12} className="left-align">Phương thức thanh toán:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.paymentMethod}</Col>
-                      <Col span={12} className="left-align">Tổng tiền sản phẩm:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.itemsPrice.toLocaleString()} VND</Col>
-                      <Col span={12} className="left-align">Phí vận chuyển:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.shippingPrice.toLocaleString()} VND</Col>
-                      <Col span={12} className="left-align">Tổng giá trị đơn hàng:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.totalPrice.toLocaleString()} VND</Col>
-                      <Col span={12} className="left-align">Trạng thái thanh toán:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</Col>
-                      <Col span={12} className="left-align">Trạng thái giao hàng:</Col>
-                      <Col span={12} className="right-align">{selectedOrder.isDelivered ? 'Đã giao hàng' : 'Chưa giao hàng'}</Col>
+                      <Col span={12}>Phương thức thanh toán:</Col>
+                      <Col span={12}>{selectedOrder.paymentMethod}</Col>
+                      <Col span={12}>Tổng tiền sản phẩm:</Col>
+                      <Col span={12}>{selectedOrder.totalPrice.toLocaleString()} VND</Col>
+                      <Col span={12}>Phí vận chuyển:</Col>
+                      <Col span={12}>{selectedOrder.shippingCost.toLocaleString()} VND</Col>
+                      <Col span={12}>Tổng giá trị đơn hàng:</Col>
+                      <Col span={12}>{selectedOrder.orderTotal.toLocaleString()} VND</Col>
+                      <Col span={12}>Trạng thái thanh toán:</Col>
+                      <Col span={12}>{selectedOrder.paymentStatus}</Col>
+                      <Col span={12}>Trạng thái giao hàng:</Col>
+                      <Col span={12}>{selectedOrder.shippingStatus}</Col>
                     </Row>
                   </Space>
                 </List.Item>

@@ -32,9 +32,7 @@ const UserPage = () => {
   }
   return (
     <div style={{ width: '90%' , margin: '0 auto'}}>
-      <div>
       
-    </div>
       <Tabs activeKey={selectedTab} onChange={handleTabChange} type="card">
          <TabPane tab="Thông tin người dùng" key="userInfo" >
           <UserInfor />

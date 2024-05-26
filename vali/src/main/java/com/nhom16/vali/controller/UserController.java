@@ -7,11 +7,13 @@ import com.nhom16.vali.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
-import java.util.Map;
+
 import java.util.*;
 import org.bson.types.ObjectId;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -80,9 +82,15 @@ public class UserController {
             User existingUser = userOptional.get();
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setAddresses(updatedUser.getAddresses());
             existingUser.setMobile(updatedUser.getMobile());
             existingUser.setPassword(updatedUser.getPassword());
+
+            if (existingUser.getAddresses() != null && !existingUser.getAddresses().isEmpty()) {
+                existingUser.getAddresses().get(0).setAddress(updatedUser.getAddresses().get(0).getAddress());
+            } else {
+                existingUser.setAddresses(updatedUser.getAddresses());
+            }
+
             userService.saveOrUpdate(existingUser);
             return ResponseEntity.ok(existingUser);
         } else {
@@ -169,4 +177,17 @@ public class UserController {
             return ResponseEntity.notFound().build(); // User not found
         }
     }
+
+    
+
+
+    // @PutMapping("forgot-password")
+    // public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    //     return new ResponseEntity<>(userService.resetPassword(email), HttpStatus.OK);
+    // }
+    @PutMapping("forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestParam String email) {
+        return new ResponseEntity<>(userService.resetPassword(email), HttpStatus.OK);
+    }
+
 }

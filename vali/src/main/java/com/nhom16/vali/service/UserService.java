@@ -3,11 +3,17 @@ package com.nhom16.vali.service;
 import com.nhom16.vali.entity.User;
 import com.nhom16.vali.entity.Address;
 import com.nhom16.vali.repository.UserRepo;
-//import com.nhom16.vali.util.EmailUtil;
+import com.nhom16.vali.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+
 import org.bson.types.ObjectId;
 //import jakarta.mail.MessagingException;
 
@@ -61,17 +67,45 @@ public class UserService {
         return repo.findByEmail(email);
     }
 
-    // public String forgotPassword(String email) {
-    // User user = repo.findByEmail(email)
-    // .orElseThrow(
-    // () -> new RuntimeException("User not found with this email: " + email));
-    // try{
-    // EmailUtil.sendSetPasswordEmail(email);
+    @Autowired
+    private EmailUtil emailUtil;
+    private String generateRandomPassword(int length) {
+        final String chars = "@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new SecureRandom();
+        StringBuilder password = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
+    }
+    // public String resetPassword(String email) {
+    //     User user = repo.findByEmail(email)
+    //             .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+    //     String newPassword = generateRandomPassword(10);
+    //     user.setPassword(passwordEncoder.encode(newPassword));
+    //     repo.save(user);
+    //     try {
+    //         emailUtil.sendNewPasswordEmail(email, newPassword);
+    //     } catch (MessagingException e) {
+    //         throw new RuntimeException("Unable to send new password email, please try again");
+    //     }
+    //     return "New password sent to your email";
+    // }
 
-    // } catch (MessagingException e){
-    // throw new RuntimeException("Unable to send set password email, please try
-    // again");
-    // }
-    // return "Please check your email to set new password";
-    // }
+    public Map<String, String> resetPassword(String email) {
+        User user = repo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        String newPassword = generateRandomPassword(10);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repo.save(user);
+        try {
+            emailUtil.sendNewPasswordEmail(email, newPassword);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send new password email, please try again");
+        }
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "New password sent to your email");
+        return response;
+    }
+
 }

@@ -14,7 +14,7 @@ const Cart = () => {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <ShoppingCartOutlined 
-        style={{ fontSize: '24px', color: '#08c', cursor: 'pointer' }} 
+        style={{ fontSize: '24px', color: '#fff', cursor: 'pointer' }} 
         onClick={handleClick}
       />
       {cartItemCount >= 0 && (

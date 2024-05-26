@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, message, Checkbox } from 'antd';
-import { StyleContainer, StyleRightCon, StyleInput, StyleInputPassword } from './style';
+import { Form, message, Checkbox } from 'antd';
+import { WrapperContainer, StyleFormContainer, StyleInput, StyleInputPassword, StyledButton, StyledHeading } from './style';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { updateUser } from '../../redux/slides/userSlide.js';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,13 +12,14 @@ const SignIn = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const user = useSelector((state) => state.user)
+    const user = useSelector((state) => state.user);
 
     const [check, setCheck] = useState(false);
     useEffect(() => {
         // Xóa trạng thái lỗi email khi người dùng thay đổi giá trị email
         setCheck(false);
     }, [form.getFieldValue('email')]);
+
     const handleSignIn = async (values) => {
         try {
             setLoading(true);
@@ -35,7 +36,7 @@ const SignIn = () => {
             if (data._id) {
                 message.success('Login success');
                 setCheck(true);
-                const  id  = data._id; // Lấy _id từ dữ liệu trả về
+                const id = data._id; // Lấy _id từ dữ liệu trả về
                 localStorage.setItem('userID', id);
                 if (rememberMe) { // Kiểm tra trạng thái của checkbox
                     localStorage.setItem('rememberMe', 'true');
@@ -69,6 +70,7 @@ const SignIn = () => {
     const onFinish = (values) => {
         handleSignIn(values);
     };
+
     useEffect(() => {
         const rememberMeEnabled = localStorage.getItem('rememberMe') === 'true';
         if (rememberMeEnabled) {
@@ -79,11 +81,11 @@ const SignIn = () => {
             }
         }
     }, []);
-    
+
     return (
-        <StyleContainer>
-            <StyleRightCon>
-                <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A93FF' }}>Đăng nhập</h4>
+        <WrapperContainer>
+            <StyleFormContainer>
+                <StyledHeading>Đăng nhập</StyledHeading>
                 <Form form={form} onFinish={onFinish}>
                     <Form.Item
                         label="Email"
@@ -114,21 +116,21 @@ const SignIn = () => {
                         help={check && 'Tài khoản hoặc mật khẩu không chính xác'}>
                         <StyleInputPassword />
                     </Form.Item>
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
                         <Checkbox checked={rememberMe} onChange={handleCheckboxChange}>Ghi nhớ thông tin đăng nhập</Checkbox>
                         <p><Link to="/ForgotPassword">Quên mật khẩu?</Link></p>
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
-                        <Button type="primary" htmlType="submit" loading={loading}>
+                    <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+                        <StyledButton type="primary" htmlType="submit" loading={loading}>
                             Đăng nhập
-                        </Button>
+                        </StyledButton>
                     </Form.Item>
 
                     <p style={{ textAlign: 'center' }}>Chưa có tài khoản? <Link to="/SignUp">Đăng ký</Link></p>
                 </Form>
-            </StyleRightCon>
-        </StyleContainer>
+            </StyleFormContainer>
+        </WrapperContainer>
     );
 };
 
