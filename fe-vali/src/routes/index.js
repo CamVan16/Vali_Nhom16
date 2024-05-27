@@ -7,6 +7,7 @@ import OrderPage from "../pages/OrderPage/OrderPage";
 import UserPage from "../pages/UserPage/UserPage";
 import HomePage from "../pages/HomePage/HomePage";
 import AdminPage from "../pages/AdminPage/AdminPage";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 export const routes = [
   {
     path: "/",
@@ -46,6 +47,11 @@ export const routes = [
   {
     path: "/UserPage",
     page: UserPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/ForgotPassword",
+    page: ForgotPassword,
     isShowHeader: true,
   },
   {

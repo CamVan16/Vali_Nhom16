@@ -38,14 +38,6 @@ const Category = ({ onCategoryChange }) => {
             value: 'Vali kéo vải',
             label: 'Vali kéo vải',
         },
-        {
-            value: 'Vali theo bộ',
-            label: 'Vali theo bộ',
-        },
-        {
-            value: 'Vali trẻ em',
-            label: 'Vali trẻ em',
-        },
       ]}
     />
     </div>

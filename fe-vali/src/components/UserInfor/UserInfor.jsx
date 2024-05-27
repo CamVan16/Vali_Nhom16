@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, message } from 'antd';
 import { WrapperContainer, StyleInput } from './style';
 import { useSelector } from 'react-redux';
-import { updateUser } from '../../redux/slides/userSlide.js';
+import { updateUser } from '../../redux/slices/userSlide.js';
 import { useDispatch } from 'react-redux';
 const UserInfo = () => {
   const dispatch = useDispatch();

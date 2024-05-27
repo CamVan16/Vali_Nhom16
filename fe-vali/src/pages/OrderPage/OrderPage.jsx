@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Input, Typography, Divider, Space, message, Radio } from 'antd';
+import { Button, Modal, Input, Typography, Divider, Space, message, Radio,  notification } from 'antd';
 import { HomeOutlined, ShoppingCartOutlined, CreditCardOutlined, MessageOutlined } from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
-import { StyledLayout, StyledContent, StyledFooter, StyledTable } from './style';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { StyledLayout, StyledContent,StyledTable } from './style';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
 const OrderPage = () => {
   const [user, setUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [newAddress, setNewAddress] = useState({ name: '', address: '', mobile: '' });
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
   const location = useLocation();
   const { selectedItems } = location.state;
   const [selectedAddress, setSelectedAddress] = useState(null);
-
-  const [shippingMethod, setShippingMethod] = useState('Nhanh'); // Default to 'Nhanh'
+  const [shippingMethod, setShippingMethod] = useState('Nhanh');
   const [shippingCost, setShippingCost] = useState(100000);
-  const [paymentMethod, setPaymentMethod] = useState('Thanh toán khi nhận hàng'); // Default to 'Thanh toán khi nhận hàng'
+  const [paymentMethod, setPaymentMethod] = useState('Thanh toán khi nhận hàng');
   const [notes, setNotes] = useState('');
-
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const navigate = useNavigate();
-  //const userID = useSelector(state => state.user.id);
   const userID = localStorage.getItem('userID');
-  useEffect(() => {
+  const [orderSuccessPopupVisible, setOrderSuccessPopupVisible] = useState(false);
 
+  useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch(`http://localhost:8080/api/v1/user/getById/${userID}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         setUser(data);
         if (data.addresses && data.addresses.length > 0) {
@@ -42,10 +39,8 @@ const OrderPage = () => {
       }
     };
 
-    if (userID) {
-      fetchUser();
-    }
-  }, []);
+    if (userID) fetchUser();
+  }, [userID]);
 
   const handleAddAddress = async () => {
     try {
@@ -56,18 +51,14 @@ const OrderPage = () => {
 
       const response = await fetch(`http://localhost:8080/api/v1/user/addAddress/${user._id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAddress),
       });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      if (!response.ok) throw new Error('Network response was not ok');
 
       const updatedUser = await response.json();
       setUser(updatedUser);
-      setSelectedAddress(updatedUser.addresses[updatedUser.addresses.length - 1]); // Chọn địa chỉ mới thêm vào
+      setSelectedAddress(updatedUser.addresses[updatedUser.addresses.length - 1]);
       setModalVisible(false);
       setNewAddress({ name: '', address: '', mobile: '' });
     } catch (error) {
@@ -98,22 +89,19 @@ const OrderPage = () => {
   const handlePaymentChange = e => {
     setPaymentMethod(e.target.value);
   };
+
   const calculateTotalPrice = () => {
     return selectedItems.reduce((total, item) => total + item.productPrice * item.quantity, 0);
   };
 
-  const clearSelectedItems = async (userID, selectedItems) => {
+  const clearSelectedItems = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/v1/cart/${userID}/removeItems`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(selectedItems.map(item => item.id)),
       });
-      if (!response.ok) {
-        throw new Error('Failed to clear selected items');
-      }
+      if (!response.ok) throw new Error('Failed to clear selected items');
       message.success('Selected items cleared');
     } catch (error) {
       message.error('Failed to clear selected items');
@@ -121,77 +109,40 @@ const OrderPage = () => {
     }
   };
 
-  // const placeOrder = async () => {
-  //   try {
-  //     const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         userId: localStorage.getItem('userID'),
-  //         cartItems: selectedItems,
-  //         totalPrice: calculateTotalPrice(),
-  //         shippingCost: shippingCost,
-  //         orderTotal: calculateTotalPrice() + shippingCost,
-  //         shippingMethod: shippingMethod,
-  //         paymentMethod: paymentMethod,
-  //         shippingAddress: user ? `${selectedAddress.name} - ${selectedAddress.address} - ${selectedAddress.mobile}` : 'Loading...',
-  //         notes: notes
-  //       }),
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-  //     const data = await response.json();
-  //     console.log(data);
-  //     message.success('Order placed successfully',5);
-  //     await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
-  //     navigate("/");
-  //   } catch (error) {
-  //     //message.error('Failed to place order');
-  //     navigate("/");
-  //     console.error('Failed to place order:', error);
-  //   }
-  // };
   const handleVNPayReturn = async () => {
     const params = new URLSearchParams(window.location.search);
-    const orderId = params.get('orderId');
+    const orderId = params.get('vnp_TxnRef');
     const vnpayResponseCode = params.get('vnp_ResponseCode');
-
-    if (vnpayResponseCode === '00') {
-      try {
-        const response = await fetch(`http://localhost:8080/api/v1/order/updatePaymentStatus`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId, paymentStatus: 'Đã thanh toán' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+  
+    if (orderId && vnpayResponseCode === '00') {
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/payment/confirm`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params),
+            });
+  
+            if (!response.ok) throw new Error('Failed to confirm payment');
+  
+            message.success('Order placed successfully', 5);
+            await clearSelectedItems();
+            navigate("/CartProductPage");
+        } catch (error) {
+            message.error('Failed to confirm payment');
+            console.error('Failed to confirm payment:', error);
         }
-
-        const data = await response.json();
-        message.success('Order placed successfully', 5);
-        await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
-        navigate("/");
-      } catch (error) {
-        message.error('Failed to update payment status');
-        console.error('Failed to update payment status:', error);
-      }
     } else {
-      message.error('VNPay payment failed');
+        message.error('VNPay payment failed');
     }
-  };
+};
 
-  useEffect(() => {
+useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('vnp_ResponseCode')) {
-      handleVNPayReturn();
+        handleVNPayReturn();
     }
-  }, []);
+}, []);
+
 
   const placeOrder = async () => {
     try {
@@ -199,7 +150,7 @@ const OrderPage = () => {
       const orderTotal = calculateTotalPrice() + shippingCost;
 
       const orderData = {
-        userId: localStorage.getItem('userID'),
+        userId: userID,
         cartItems: selectedItems,
         totalPrice: calculateTotalPrice(),
         shippingCost: shippingCost,
@@ -209,55 +160,48 @@ const OrderPage = () => {
         shippingAddress: user ? `${selectedAddress.name} - ${selectedAddress.address} - ${selectedAddress.mobile}` : 'Loading...',
         notes: notes,
         shippingStatus: shippingStatus,
-        paymentStatus: paymentMethod === 'Thanh toán khi nhận hàng' ? 'Đã thanh toán' : 'Chờ thanh toán',
+        paymentStatus: paymentMethod === 'Thanh toán khi nhận hàng' ? 'Chưa thanh toán' : 'Chờ thanh toán',
       };
-
-      // Nếu thanh toán qua VNPAY
       if (paymentMethod === 'Thanh toán qua VNPAY') {
         const response = await fetch(`http://localhost:8080/api/v1/order/createVNPAYOrder`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData),
         });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
+      
+        if (!response.ok) throw new Error('Network response was not ok');
+      
         const createdOrder = await response.json();
         const paymentResponse = await fetch(`http://localhost:8080/api/v1/payment/create?amount=${orderTotal}&orderId=${createdOrder.id}`);
-        if (!paymentResponse.ok) {
-          throw new Error('Failed to create payment URL');
-        }
+        if (!paymentResponse.ok) throw new Error('Failed to create payment URL');
+        
         const paymentData = await paymentResponse.json();
         window.location.href = paymentData.paymentUrl;
       } else {
-        // Nếu không phải thanh toán qua VNPAY, lưu đơn hàng ngay lập tức
         const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData),
         });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
+      
+        if (!response.ok) throw new Error('Network response was not ok');
+      
         const data = await response.json();
-        message.success('Order placed successfully', 5);
-        await clearSelectedItems(localStorage.getItem('userID'), selectedItems);
-        navigate("/");
-      }
+        setOrderSuccessPopupVisible(true);
+        //message.success('Order placed successfully', 5);
+        // await clearSelectedItems();
+        // navigate("/CartProductPage");
+        setTimeout(async () => {
+          await clearSelectedItems();
+          setOrderSuccessPopupVisible(false);
+          navigate("/CartProductPage");
+        }, 2000);
+      }      
     } catch (error) {
       message.error('Failed to place order');
       console.error('Failed to place order:', error);
-    }
+    }    
   };
-
 
   const columns = [
     {
@@ -308,129 +252,111 @@ const OrderPage = () => {
   }));
 
   return (
-    <StyledLayout className="order-page">
+    <StyledLayout>
       <StyledContent>
-        <section className="shipping-info">
-          <Title level={2}><HomeOutlined /> Địa Chỉ Nhận Hàng</Title>
-          {user ? (
-            <>
-              {renderSelectedAddress()}
-              <Button type="primary" onClick={() => setModalVisible(true)}>Thay Đổi</Button>
-            </>
-          ) : (
-            <Text>Loading...</Text>
-          )}
-        </section>
+        <Divider orientation="left">
+          <Title level={4}><HomeOutlined /> Địa chỉ nhận hàng</Title>
+        </Divider>
+        {renderSelectedAddress()}
+        <Button type="primary" onClick={() => setModalVisible(true)}>Thay đổi địa chỉ</Button>
 
-        <Modal
-          title="Thay Đổi Địa Chỉ Nhận Hàng"
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          footer={[
-            <Button key="cancel" onClick={() => setModalVisible(false)}>OK</Button>,
-            <Button key="add" type="primary" onClick={handleAddAddress}>Thêm Địa Chỉ</Button>,
-          ]}
-        >
-          <Radio.Group
-            onChange={(e) => setSelectedAddress(user.addresses.find(addr => addr.id === e.target.value))}
-            value={selectedAddress ? selectedAddress.id : null}
-          >
-            {user && user.addresses.map(address => (
-              <Radio key={address.id} value={address.id}>
-                <Text>{address.name} ({address.mobile})</Text>
-                <Text>{address.address}</Text><br />
-              </Radio>
-            ))}
-          </Radio.Group>
-          <Divider />
-          <Input
-            placeholder="Tên người nhận"
-            value={newAddress.name}
-            onChange={e => setNewAddress({ ...newAddress, name: e.target.value })}
-          />
-          <Input
-            placeholder="Địa chỉ"
-            value={newAddress.address}
-            onChange={e => setNewAddress({ ...newAddress, address: e.target.value })}
-          />
-          <Input
-            placeholder="Số điện thoại"
-            value={newAddress.mobile}
-            onChange={e => setNewAddress({ ...newAddress, mobile: e.target.value })}
-          />
-        </Modal>
+        <Divider orientation="left">
+          <Title level={4}><ShoppingCartOutlined /> Sản phẩm</Title>
+        </Divider>
+        <StyledTable dataSource={dataSource} columns={columns} pagination={false} />
 
-        <Divider />
+        <Divider orientation="left">
+          <Title level={4}><CreditCardOutlined /> Phương thức vận chuyển</Title>
+        </Divider>
+        <Radio.Group onChange={handleShippingChange} value={shippingMethod}>
+          <Space direction="vertical">
+            <Radio value="Nhanh">Giao hàng nhanh (100,000 VND)</Radio>
+            <Radio value="Cham">Giao hàng tiêu chuẩn (70,000 VND)</Radio>
+          </Space>
+        </Radio.Group>
 
-        <section className="order-items">
-          <Title level={2}><ShoppingCartOutlined /> Sản phẩm</Title>
-          <StyledTable
-            columns={columns}
-            dataSource={dataSource}
-            pagination={false}
-          />
-        </section>
-
-        {/* <Divider />
-
-        <section className="voucher-section">
-          <Title level={2}>Voucher của Shop</Title>
-          <Button type="primary">Chọn Voucher</Button>
-        </section> */}
-
-        <Divider />
-
-        <section className="shipping-method">
-          <Title level={2}>Đơn vị vận chuyển</Title>
-          <Radio.Group onChange={handleShippingChange} value={shippingMethod}>
-            <Radio value="Nhanh">Nhanh - 100,000 VND</Radio>
-            <Radio value="Thuong">Thường - 70,000 VND</Radio>
-          </Radio.Group>
-          {/* <Space direction="vertical">
-            <Text>Phí vận chuyển: {shippingCost.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
-          </Space> */}
-        </section>
-
-        <Divider />
-
-        <section className="payment-method">
-          <Title level={2}><CreditCardOutlined /> Phương thức thanh toán</Title>
-          <Radio.Group onChange={handlePaymentChange} value={paymentMethod}>
+        <Divider orientation="left">
+          <Title level={4}><CreditCardOutlined /> Phương thức thanh toán</Title>
+        </Divider>
+        <Radio.Group onChange={handlePaymentChange} value={paymentMethod}>
+          <Space direction="vertical">
             <Radio value="Thanh toán khi nhận hàng">Thanh toán khi nhận hàng</Radio>
             <Radio value="Thanh toán qua VNPAY">Thanh toán qua VNPAY</Radio>
-          </Radio.Group>
-        </section>
-
-        <Divider />
-
-        <section className="order-total">
-          <Title level={2}>Tổng tiền đơn hàng</Title>
-          <Space direction="vertical">
-            <Text>Tổng tiền hàng: {calculateTotalPrice().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
-            <Text>Phí vận chuyển: {shippingCost.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
-            <Text strong>Tổng thanh toán: {(calculateTotalPrice() + shippingCost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
           </Space>
-        </section>
+        </Radio.Group>
+
+        <Divider orientation="left">
+          <Title level={4}><MessageOutlined /> Ghi chú</Title>
+        </Divider>
+        <TextArea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
 
         <Divider />
+        <Title level={4}>Tổng thanh toán: {(calculateTotalPrice() + shippingCost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
+        <Button type="primary" onClick={placeOrder}>Đặt hàng</Button>
 
-        <section className="order-notes">
-          <Title level={2}><MessageOutlined /> Lời nhắn</Title>
-          <TextArea
-            placeholder="Lưu ý cho người bán..."
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-          />
-        </section>
+        <Modal
+          title="Thay đổi địa chỉ"
+          visible={modalVisible}
+          onOk={handleAddAddress}
+          onCancel={() => setModalVisible(false)}
+          footer={null}
+        >
+          {!showAddAddressForm ? (
+            <>
+              <Radio.Group onChange={e => setSelectedAddress(e.target.value)} value={selectedAddress}>
+                <Space direction="vertical">
+                  {user?.addresses.map(address => (
+                    <Radio key={address._id} value={address}>
+                      <div>
+                        <Text>{address.name} ({address.mobile})</Text>
+                        <Text>{address.address}</Text>
+                      </div>
+                    </Radio>
+                  ))}
+                </Space>
+              </Radio.Group>
+              <Button type="link" onClick={() => setShowAddAddressForm(true)}>Thêm địa chỉ mới</Button>
+              <Button type="primary" onClick={() => setModalVisible(false)}>Xác nhận</Button>
+            </>
+          ) : (
+            <>
+              <Input
+                placeholder="Tên người nhận"
+                value={newAddress.name}
+                onChange={e => setNewAddress({ ...newAddress, name: e.target.value })}
+                style={{ marginBottom: '10px' }}
+              />
+              <Input
+                placeholder="Địa chỉ"
+                value={newAddress.address}
+                onChange={e => setNewAddress({ ...newAddress, address: e.target.value })}
+                style={{ marginBottom: '10px' }}
+              />
+              <Input
+                placeholder="Số điện thoại"
+                value={newAddress.mobile}
+                onChange={e => setNewAddress({ ...newAddress, mobile: e.target.value })}
+                style={{ marginBottom: '10px' }}
+              />
+              <Button type="primary" onClick={handleAddAddress}>Lưu</Button>
+              <Button type="link" onClick={() => setShowAddAddressForm(false)}>Quay lại</Button>
+            </>
+          )}
+        </Modal>
+        <Modal
+          title="Thông báo"
+          visible={orderSuccessPopupVisible}
+          footer={null}
+          closable={true}
+        >
+          <p>Đặt hàng thành công!</p>
+        </Modal>
+
       </StyledContent>
-
-      <StyledFooter className="order-footer">
-  <Button type="primary" size="large" onClick={placeOrder}>Đặt hàng</Button>
-</StyledFooter>
-
     </StyledLayout>
   );
-}
+};
 
 export default OrderPage;
+
 

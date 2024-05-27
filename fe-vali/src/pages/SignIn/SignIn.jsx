@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, message, Checkbox } from 'antd';
 import { StyleContainer, StyleRightCon, StyleInput, StyleInputPassword } from './style';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { updateUser } from '../../redux/slides/userSlide.js';
+import { updateUser } from '../../redux/slices/userSlide.js';
 import { useSelector, useDispatch } from 'react-redux';
 
 const SignIn = () => {

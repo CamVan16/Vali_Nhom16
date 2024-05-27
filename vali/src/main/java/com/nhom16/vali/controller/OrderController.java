@@ -93,4 +93,24 @@ public class OrderController {
             return ResponseEntity.status(400).build();
         }
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable String id, @RequestBody Order orderDetails) {
+        Optional<Order> optionalOrder = orderService.getOrderById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setPaymentStatus(orderDetails.getPaymentStatus());
+            order.setShippingStatus(orderDetails.getShippingStatus());
+            Order updatedOrder = orderService.createOrder(order);
+            return ResponseEntity.ok(updatedOrder);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
+        orderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
+    }
 }

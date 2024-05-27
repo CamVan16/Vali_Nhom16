@@ -7,13 +7,15 @@ import CustomizedContent from "./components/CustomizedContent";
 
 import AdminUser from "../../components/AdminUser/AdminUser";
 import { useQueries } from "@tanstack/react-query";
-
+import AdminProduct from "../../components/AdminProduct/AdminProduct";
+import AdminOrder from "../../components/AdminOrder/AdminOrder";
 const AdminPage = () => {
   const [keySelected, setKeySelected] = useState("");
 
   const items = [
-    getItem("User", "users",<UserOutlined />),
-    
+    getItem("Quản lý khách hàng", "users",<UserOutlined />),
+    getItem("Quản lý sản phẩm", "products",<UserOutlined />),
+    getItem("Quản lý hoá đơn ", "orders",<UserOutlined />),
   ];
 
   
@@ -26,7 +28,10 @@ const AdminPage = () => {
     switch (key) {
       case "users":
         return <AdminUser />;
-      
+      case "products":
+        return <AdminProduct/>;
+      case "orders":
+        return <AdminOrder/>;
       default:
         return null;
     }

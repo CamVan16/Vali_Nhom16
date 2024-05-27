@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { searchProduct } from '../../redux/slides/productSlice';
+import { searchProduct } from '../../redux/slices/productSlice';
 import { Input, Button } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
