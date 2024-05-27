@@ -80,8 +80,15 @@ public class UserController {
             User existingUser = userOptional.get();
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setAddresses(updatedUser.getAddresses());
             existingUser.setMobile(updatedUser.getMobile());
+            existingUser.setPassword(updatedUser.getPassword());
+
+            if (existingUser.getAddresses() != null && !existingUser.getAddresses().isEmpty()) {
+                existingUser.getAddresses().get(0).setAddress(updatedUser.getAddresses().get(0).getAddress());
+            } else {
+                existingUser.setAddresses(updatedUser.getAddresses());
+            }
+
             userService.saveOrUpdate(existingUser);
             return ResponseEntity.ok(existingUser);
         } else {
@@ -167,5 +174,10 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build(); // User not found
         }
+    }
+
+    @PutMapping("forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestParam String email) {
+        return new ResponseEntity<>(userService.resetPassword(email), HttpStatus.OK);
     }
 }

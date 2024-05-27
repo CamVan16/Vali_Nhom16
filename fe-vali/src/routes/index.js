@@ -59,6 +59,11 @@ export const routes = [
     page: AdminPage,
     isShowHeader: true,
   },
+  {
+    path: "/ForgotPassword",
+    page: ForgotPassword,
+    isShowHeader: true,
+  },
 ];
 
 

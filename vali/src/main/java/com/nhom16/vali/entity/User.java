@@ -10,22 +10,19 @@ public class User {
     private String _id;
     private String username;
     private String email;
-    private List<Address> addresses; // List of addresses
+    private List<Address> addresses;
     private String mobile;
     private String password;
-    private String access_token;
-    private String refresh_token;
+    // private String access_token;
+    // private String refresh_token;
 
-    public User(String _id, String username, String email, List<Address> addresses, String mobile, String password,
-            String access_token, String refresh_token) {
+    public User(String _id, String username, String email, List<Address> addresses, String mobile, String password) {
         this._id = _id;
         this.username = username;
         this.email = email;
         this.addresses = addresses;
         this.mobile = mobile;
         this.password = password;
-        this.access_token = access_token;
-        this.refresh_token = refresh_token;
     }
 
     public User() {
@@ -79,22 +76,6 @@ public class User {
         this.password = password;
     }
 
-    public String getAccess_token() {
-        return access_token;
-    }
-
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public String getRefresh_token() {
-        return refresh_token;
-    }
-
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -104,8 +85,6 @@ public class User {
                 ", addresses=" + addresses +
                 ", mobile='" + mobile + '\'' +
                 ", password='" + password + '\'' +
-                ", access_token='" + access_token + '\'' +
-                ", refresh_token='" + refresh_token + '\'' +
                 '}';
     }
 }

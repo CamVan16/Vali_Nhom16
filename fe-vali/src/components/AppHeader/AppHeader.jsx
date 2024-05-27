@@ -7,7 +7,6 @@ import "./style.css";
 import { WrapperContentPopup } from "./style";
 import SearchBar from "../SearchBar/SearchBar";
 import Cart from "../Cart/Cart"
-
 const { Header } = Layout;
 
 const AppHeader = () => {
@@ -52,7 +51,7 @@ const AppHeader = () => {
         if (type === "UserPage") {
             navigate("/UserPage");
         } else if (type === "admin") {
-            navigate("/system/admin");
+            navigate("/AdminPage");
         } else if (type === "my-order") {
             navigate("/my-order", {
                 state: {
@@ -210,11 +209,7 @@ const AppHeader = () => {
                     </div>
                 )}
                 <Badge size="small">
-                    {/* <ShoppingCartOutlined
-                        style={{ fontSize: "36px", color: "#fff" }}
-                        onClick={goToCart}
-                    /> */}
-                    <Cart></Cart>
+                    <Cart/>
                 </Badge>
             </div>
         </Header>
