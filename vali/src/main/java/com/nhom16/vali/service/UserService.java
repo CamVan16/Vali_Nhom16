@@ -5,16 +5,16 @@ import com.nhom16.vali.entity.Address;
 import com.nhom16.vali.repository.UserRepo;
 import com.nhom16.vali.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.mail.MessagingException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
 import org.bson.types.ObjectId;
+import jakarta.mail.MessagingException;
 
 @Service
 public class UserService {
@@ -31,11 +31,9 @@ public class UserService {
                 }
             }
         }
-
         if (user.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-
         repo.save(user);
     }
 
@@ -88,6 +86,21 @@ public class UserService {
         }
         return password.toString();
     }
+    // public String resetPassword(String email) {
+    // User user = repo.findByEmail(email)
+    // .orElseThrow(() -> new RuntimeException("User not found with this email: " +
+    // email));
+    // String newPassword = generateRandomPassword(10);
+    // user.setPassword(passwordEncoder.encode(newPassword));
+    // repo.save(user);
+    // try {
+    // emailUtil.sendNewPasswordEmail(email, newPassword);
+    // } catch (MessagingException e) {
+    // throw new RuntimeException("Unable to send new password email, please try
+    // again");
+    // }
+    // return "New password sent to your email";
+    // }
 
     public Map<String, String> resetPassword(String email) {
         User user = repo.findByEmail(email)
@@ -104,4 +117,5 @@ public class UserService {
         response.put("message", "New password sent to your email");
         return response;
     }
+
 }

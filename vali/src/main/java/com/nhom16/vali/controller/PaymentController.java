@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.nhom16.vali.config.Config;
 import com.nhom16.vali.entity.Payment;
@@ -21,47 +23,23 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("api/v1/payment")
+
 public class PaymentController {
 
     @Autowired
     private OrderRepo orderRepo;
 
-    @PostMapping("/confirm")
-    public ResponseEntity<String> confirmPayment(@RequestParam Map<String, String> allParams) {
-        String vnp_ResponseCode = allParams.get("vnp_ResponseCode");
-        String orderId = allParams.get("vnp_TxnRef");
-
-        if (orderId != null && vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) {
-            try {
-                Optional<Order> optionalOrder = orderRepo.findById(orderId);
-                if (optionalOrder.isPresent()) {
-                    Order order = optionalOrder.get();
-                    order.setPaymentStatus("Đã thanh toán");
-                    // order.setShippingStatus("Chưa nhận hàng");
-                    orderRepo.save(order);
-                    return ResponseEntity.ok("Payment confirmed and order saved.");
-                } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
-                }
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update order status.");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed.");
-        }
-    }
-
     @GetMapping("/create")
     public ResponseEntity<Map<String, String>> createPayment(HttpServletRequest req,
-            @RequestParam("amount") long amount) throws UnsupportedEncodingException {
+            @RequestParam("amount") long amount,
+            @RequestParam("orderId") String orderId) throws UnsupportedEncodingException {
         amount = amount * 100;
         String orderType = "other";
-        String vnp_TxnRef = Config.getRandomNumber(8);
+        String vnp_TxnRef = orderId;
         String vnp_IpAddr = Config.getIpAddress(req);
         String vnp_TmnCode = Config.vnp_TmnCode;
 
@@ -98,8 +76,10 @@ public class PaymentController {
             String fieldName = itr.next();
             String fieldValue = vnp_Params.get(fieldName);
             if (fieldValue != null && fieldValue.length() > 0) {
+                // Build hash data
                 hashData.append(fieldName).append('=')
                         .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                // Build query
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString())).append('=')
                         .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
                 if (itr.hasNext()) {
@@ -115,12 +95,37 @@ public class PaymentController {
 
         Map<String, String> response = new HashMap<>();
         response.put("paymentUrl", paymentUrl);
+
+        // Add logging
         System.out.println("Generated vnp_Params: " + vnp_Params);
         System.out.println("Hash Data: " + hashData);
         System.out.println("Query URL: " + queryUrl);
         System.out.println("Payment URL: " + paymentUrl);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/confirm")
+    public RedirectView confirmPayment(@RequestParam Map<String, String> allParams, HttpServletRequest respone) {
+        String vnp_ResponseCode = allParams.get("vnp_ResponseCode");
+        if ("00".equals(vnp_ResponseCode)) {
+            String orderId = allParams.get("vnp_TxnRef");
+            Optional<Order> optionalOrder = orderRepo.findById(orderId);
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
+                order.setPaymentStatus("Đã thanh toán");
+                orderRepo.save(order);
+
+                // Chuyển hướng đến trang CartProductPage nếu thanh toán thành công
+                return new RedirectView("http://localhost:3000/CartProductPage");
+            } else {
+                // Trả về lỗi 404 nếu không tìm thấy đơn hàng
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found.");
+            }
+        } else {
+            // Trả về lỗi 400 nếu thanh toán thất bại
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment failed.");
+        }
     }
 
 }

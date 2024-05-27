@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Input, Typography, Divider, Space, message, Radio,  notification } from 'antd';
+import { Button, Modal, Input, Typography, Divider, Space, message, Radio, notification } from 'antd';
 import { HomeOutlined, ShoppingCartOutlined, CreditCardOutlined, MessageOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StyledLayout, StyledContent,StyledTable } from './style';
+import { StyledLayout, StyledContent, StyledTable } from './style';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -18,7 +18,6 @@ const OrderPage = () => {
   const [shippingCost, setShippingCost] = useState(100000);
   const [paymentMethod, setPaymentMethod] = useState('Thanh toán khi nhận hàng');
   const [notes, setNotes] = useState('');
-  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const navigate = useNavigate();
   const userID = localStorage.getItem('userID');
   const [orderSuccessPopupVisible, setOrderSuccessPopupVisible] = useState(false);
@@ -109,40 +108,38 @@ const OrderPage = () => {
     }
   };
 
-  const handleVNPayReturn = async () => {
-    const params = new URLSearchParams(window.location.search);
-    const orderId = params.get('vnp_TxnRef');
+  const handleVNPayReturn = async (params) => {
+    const orderId = params.get('orderId');
     const vnpayResponseCode = params.get('vnp_ResponseCode');
-  
-    if (orderId && vnpayResponseCode === '00') {
-        try {
-            const response = await fetch(`http://localhost:8080/api/v1/payment/confirm`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(params),
-            });
-  
-            if (!response.ok) throw new Error('Failed to confirm payment');
-  
-            message.success('Order placed successfully', 5);
-            await clearSelectedItems();
-            navigate("/CartProductPage");
-        } catch (error) {
-            message.error('Failed to confirm payment');
-            console.error('Failed to confirm payment:', error);
-        }
-    } else {
-        message.error('VNPay payment failed');
-    }
-};
 
-useEffect(() => {
+    if (orderId && vnpayResponseCode === '00') {
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/payment/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(params)),
+        });
+
+        if (!response.ok) throw new Error('Failed to confirm payment');
+
+        message.success('Order placed successfully', 5);
+        await clearSelectedItems();
+        navigate("/CartProductPage");
+      } catch (error) {
+        message.error('Failed to confirm payment');
+        console.error('Failed to confirm payment:', error);
+      }
+    } else {
+      message.error('VNPay payment failed');
+    }
+  };
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('vnp_ResponseCode')) {
-        handleVNPayReturn();
+      handleVNPayReturn(params);
     }
-}, []);
-
+  }, []);
 
   const placeOrder = async () => {
     try {
@@ -168,13 +165,13 @@ useEffect(() => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData),
         });
-      
+
         if (!response.ok) throw new Error('Network response was not ok');
-      
+
         const createdOrder = await response.json();
         const paymentResponse = await fetch(`http://localhost:8080/api/v1/payment/create?amount=${orderTotal}&orderId=${createdOrder.id}`);
         if (!paymentResponse.ok) throw new Error('Failed to create payment URL');
-        
+
         const paymentData = await paymentResponse.json();
         window.location.href = paymentData.paymentUrl;
       } else {
@@ -183,24 +180,20 @@ useEffect(() => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData),
         });
-      
+
         if (!response.ok) throw new Error('Network response was not ok');
-      
-        const data = await response.json();
+
         setOrderSuccessPopupVisible(true);
-        //message.success('Order placed successfully', 5);
-        // await clearSelectedItems();
-        // navigate("/CartProductPage");
         setTimeout(async () => {
           await clearSelectedItems();
           setOrderSuccessPopupVisible(false);
           navigate("/CartProductPage");
         }, 2000);
-      }      
+      }
     } catch (error) {
       message.error('Failed to place order');
       console.error('Failed to place order:', error);
-    }    
+    }
   };
 
   const columns = [
