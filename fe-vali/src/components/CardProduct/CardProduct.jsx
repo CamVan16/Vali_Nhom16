@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { StyleName, StrikeThrough, DiscountPrice, DiscountPercent, StyledContent, StyleCard, StyleDis } from './style';
+import { StyleName, StrikeThrough, DiscountPrice, DiscountPercent, StyledContent, StyleCard, StyleDis, StyledButton } from './style';
 import { Link } from 'react-router-dom';
 
 const CardProduct = ({ product }) => {
@@ -14,7 +14,7 @@ const CardProduct = ({ product }) => {
   return (
     <StyleCard>
       <div>
-        <img alt={product.name} src={Object.values(product.img)[0]} style={{ maxWidth: '100%', height: 'auto' }} />
+        <img alt={product.name} src={Object.values(product.img)[0]} style={{ maxWidth: '100%', height: 'auto', borderRadius: '5px' }} />
       </div>
       <StyleName>{product.name}</StyleName>
       <StyledContent>
@@ -32,7 +32,7 @@ const CardProduct = ({ product }) => {
           {product.discount > 0 ? formattedPrice(discountedPrice) : formattedPrice(productPrice)}
         </DiscountPrice>
         <Link to={`/ProductDetail/${product.id}`} style={{ display: 'block', width: '100%' }}>
-          <Button type="primary" danger style={{ width: '100%' }}>Xem sản phẩm</Button>
+          <StyledButton type="primary" danger style={{ width: '100%' }}>Xem sản phẩm</StyledButton>
         </Link>
       </StyledContent>
     </StyleCard>

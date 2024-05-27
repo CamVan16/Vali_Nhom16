@@ -8,6 +8,8 @@ const ChangePassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const userID = localStorage.getItem('userID');
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/;
+  const [validatePass, setvalidatePass] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +20,8 @@ const ChangePassword = () => {
 
   const handleLogout = async () => {
     try {
-      
+      // Clear user data from localStorage or any other state management
+      localStorage.removeItem('userID');
       window.location.href = '/SignIn';
     } catch (error) {
       console.error('Lỗi khi đăng xuất:', error);
@@ -27,6 +30,11 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!passwordRegex.test(newPassword)) {
+      setvalidatePass(false);
+
+      return;
+    }
 
     if (newPassword !== confirmNewPassword) {
       message.error('Mật khẩu mới và nhập lại mật khẩu mới không khớp.');
@@ -34,32 +42,28 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/user/getById/${userID}`);
-      const userData = await response.json();
-
-      if (userData.password !== oldPassword) {
-        message.error('Mật khẩu cũ không đúng.');
-        return;
-      }
-
-      const updateUser = {
-        ...userData,
-        password: newPassword,
-      };
-
-      await fetch(`http://localhost:8080/api/v1/user/update/${userID}`, {
+      const response = await fetch(`http://localhost:8080/api/v1/user/change-password/${userID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updateUser),
+        body: JSON.stringify({
+          oldPassword,
+          newPassword,
+          confirmPassword: confirmNewPassword
+        }),
       });
 
-      message.success('Cập nhật mật khẩu thành công.');
-      setOldPassword('');
-      setNewPassword('');
-      setConfirmNewPassword('');
-      handleLogout();
+      if (response.ok) {
+        message.success('Cập nhật mật khẩu thành công.');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        handleLogout();
+      } else {
+        const errorData = await response.json();
+        message.error(errorData.message || 'Đã xảy ra lỗi khi cập nhật mật khẩu.');
+      }
     } catch (error) {
       console.error(error);
       message.error('Đã xảy ra lỗi khi cập nhật mật khẩu.');
@@ -77,6 +81,8 @@ const ChangePassword = () => {
 
           <Form.Item label="Mật khẩu mới">
             <StyleInputPassword type="password" name="newPassword" value={newPassword} onChange={handleChange} />
+            {!validatePass && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Mật khẩu phải chứa ít nhất 8 kí tự bao gồm kí tự hoa, kí tự thường, chữ số và kí tự đặc biệt</p>}
+
           </Form.Item>
 
           <Form.Item label="Nhập lại mật khẩu mới">

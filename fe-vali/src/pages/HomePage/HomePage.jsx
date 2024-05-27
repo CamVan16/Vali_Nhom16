@@ -4,10 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import CardProduct from '../../components/CardProduct/CardProduct';
 import { Button } from 'antd';
 import { FaShieldAlt, FaStore, FaTruck, FaSuitcase } from 'react-icons/fa';
+const searchButtonStyles = {
+  backgroundColor: 'transparent',
+  color: '#fff',
+  height: '35px',
 
+  border: '1px solid #00a86b',
+  transition: 'background-color 0.3s, border-color 0.3s',
+};
+
+const searchButtonHoverStyles = {
+  backgroundColor: '#02ce83',
+  borderColor: '#02ce83',
+  color: '#fff',
+  weight:'25px',
+
+};
 const HomePage = () => {
   const navigate = useNavigate();
   const [latestProducts, setLatestProducts] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:8080/api/v1/product/getall')
@@ -48,7 +64,7 @@ const HomePage = () => {
         </div>
       </StyledCarousel>
       <BrandTag>NHỮNG DÒNG THƯƠNG HIỆU ĐƯỢC ƯA CHUỘNG NHẤT</BrandTag>
-      <BrandContainer> 
+      <BrandContainer>
         {brands.map((brand, index) => (
           <BrandItem key={index} onClick={() => handleBrandClick(brand)}>
             {brand}
@@ -57,7 +73,12 @@ const HomePage = () => {
       </BrandContainer>
       <BrandTag>
         <div>NHỮNG DÒNG SẢN PHẨM MỚI NHẤT</div>
-        <Button type="link" onClick={handleViewMoreClick}>Xem thêm</Button>
+        <Button type="link"
+          onClick={handleViewMoreClick}
+          style={isHovered ? { ...searchButtonStyles, ...searchButtonHoverStyles } : searchButtonStyles}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >Xem thêm</Button>
       </BrandTag>
       <BrandContainer>
         {latestProducts.map((product) => (

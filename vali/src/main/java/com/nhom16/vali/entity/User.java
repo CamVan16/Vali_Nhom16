@@ -13,16 +13,17 @@ public class User {
     private List<Address> addresses;
     private String mobile;
     private String password;
-    // private String access_token;
-    // private String refresh_token;
+    private boolean isAdmin;
+    
 
-    public User(String _id, String username, String email, List<Address> addresses, String mobile, String password) {
+    public User(String _id, String username, String email, List<Address> addresses, String mobile, String password, boolean isAdmin) {
         this._id = _id;
         this.username = username;
         this.email = email;
         this.addresses = addresses;
         this.mobile = mobile;
         this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public User() {
@@ -75,6 +76,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    public boolean getIsAdmin() { 
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) { 
+        this.isAdmin = isAdmin;
+    }
 
     @Override
     public String toString() {
@@ -85,6 +93,7 @@ public class User {
                 ", addresses=" + addresses +
                 ", mobile='" + mobile + '\'' +
                 ", password='" + password + '\'' +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
 }

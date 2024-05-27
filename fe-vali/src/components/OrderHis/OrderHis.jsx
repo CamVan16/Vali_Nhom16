@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Modal, Button, List, Typography, Space, Row, Col, Image } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
   const [orderHistory, setOrderHistory] = useState([]);
@@ -8,6 +9,7 @@ const OrderHistory = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [productDetails, setProductDetails] = useState({});
   const userId = localStorage.getItem('userID');
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -22,7 +24,11 @@ const OrderHistory = () => {
       render: (cartItems) => (
         <span>
           {cartItems.map((item) => (
-            <div key={item.id}>{productDetails[item.productId]?.name || item.productId}</div>
+            <div key={item.id}>
+              <a onClick={() => navigate(`/ProductDetail/${item.productId}`)}>
+                {productDetails[item.productId]?.name || item.productId}
+              </a>
+            </div>
           ))}
         </span>
       ),
@@ -148,7 +154,7 @@ const OrderHistory = () => {
                   <List.Item key={item.id}>
                     <List.Item.Meta
                       avatar={<Image src={product.img[item.color]} alt={product.name} width={50} />}
-                      title={product.name}
+                      title={<a onClick={() => navigate(`/ProductDetail/${item.productId}`)}>{product.name}</a>}
                     />
                     <Space direction="vertical">
                       <p>Màu sắc: {item.color}</p>

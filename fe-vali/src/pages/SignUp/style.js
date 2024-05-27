@@ -34,7 +34,6 @@ export const StyleInput = styled(Input)`
     &:hover,
     &:focus {
         border-color: #00a86b;
-        color: #fff;
     }
 `;
 

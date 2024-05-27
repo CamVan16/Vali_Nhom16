@@ -1,53 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input, message } from 'antd';
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
-import { useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, Table, Modal, Form, Input, message, Row, Col } from 'antd';
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 
 const AdminUser = () => {
-
   const [users, setUsers] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [userData, setUserData] = useState({});
   const [form] = Form.useForm();
   const [deleteUserId, setDeleteUserId] = useState(null);
-  const searchInput = useRef(null);
+  const [searchText, setSearchText] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-
-  };
-  const handleReset = (clearFilters) => {
-    clearFilters();
-
-  };
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  // const fetchUserData = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:8080/api/v1/user/getall');
-  //     const data = await response.json();
-  //     setUsers(data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  useEffect(() => {
+    filterUsers();
+  }, [searchText, users]);
+
   const fetchUserData = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/v1/user/getall');
       const data = await response.json();
-      // Ensure each user has an address array, even if empty
       const processedData = data.map(user => ({
         ...user,
         address: user.address || [],
       }));
       setUsers(processedData);
+      setTotalUsers(processedData.length);
+      setFilteredUsers(processedData);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const filterUsers = () => {
+    let filtered = users;
+    if (searchText) {
+      filtered = filtered.filter(user =>
+        user.username.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.mobile.toString().includes(searchText) ||
+        (user.addresses && user.addresses.length > 0 && user.addresses[0].address.toLowerCase().includes(searchText.toLowerCase())) ||
+        user._id.includes(searchText)
+      );
+    }
+    setFilteredUsers(filtered);
+  };
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
   const handleDelete = async (userId) => {
     setDeleteUserId(userId);
     setDeleteModalVisible(true);
@@ -55,16 +62,11 @@ const AdminUser = () => {
 
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/user/delete/${deleteUserId}`, {
+      await fetch(`http://localhost:8080/api/v1/user/delete/${deleteUserId}`, {
         method: 'DELETE',
       });
-      const data = await response.json();
-      if (data.status === 'OK') {
-        message.success('User deleted successfully');
-        fetchUserData();
-      } else {
-        message.error('Failed to delete user');
-      }
+      message.success('User deleted successfully');
+      fetchUserData();
     } catch (error) {
       console.error(error);
       message.error('An error occurred while deleting user');
@@ -79,12 +81,6 @@ const AdminUser = () => {
     setDeleteUserId(null);
   };
 
-  // const showModal = (user) => {
-  //   setUpdateModalVisible(true);
-  //   setUserData(user);
-  //   form.setFieldsValue(user);
-  // };
-
   const showModal = (user) => {
     setUpdateModalVisible(true);
     setUserData(user);
@@ -93,8 +89,6 @@ const AdminUser = () => {
       address: user.addresses && user.addresses.length > 0 ? user.addresses[0].address : '',
     });
   };
-  
-  
 
   const handleUpdate = async () => {
     try {
@@ -122,7 +116,7 @@ const AdminUser = () => {
         body: JSON.stringify(updatedUser),
       });
       const data = await response.json();
-      if (data.status === 'OK') {
+      if (data._id) {
         message.success('User updated successfully');
         setUpdateModalVisible(false);
         fetchUserData();
@@ -134,87 +128,37 @@ const AdminUser = () => {
       message.error('An error occurred while updating user');
     }
   };
-  
-  
-
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
-        />
-        <Button
-          type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          icon={<SearchOutlined />}
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
-        </Button>
-        <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-          Reset
-        </Button>
-      </div>
-    ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-        : '',
-    onFilterDropdownOpenChange: open => {
-      if (open) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-  });
-
 
   const columns = [
     {
       title: 'ID',
       dataIndex: '_id',
       key: '_id',
-      ...getColumnSearchProps('_id'),
     },
     {
       title: 'Tên người dùng',
       dataIndex: 'username',
       key: 'username',
-      sorter: (a, b) => a.username.length - b.username.length,
-      ...getColumnSearchProps('username'),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
-      sorter: (a, b) => a.email.length - b.email.length,
-      ...getColumnSearchProps('email'),
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'mobile',
       key: 'mobile',
-      ...getColumnSearchProps('mobile'),
-      sorter: (a, b) => a.mobile - b.mobile,
       render: (mobile) => mobile.toString().replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3'),
-
     },
     {
       title: 'Địa chỉ',
       dataIndex: 'addresses',
       key: 'addresses',
-      sorter: (a, b) => a.addresses.length - b.addresses.length,
-      render: (addresses) => 
-        addresses && addresses.length > 0 
-          ? addresses[0].address 
+      render: (addresses) =>
+        addresses && addresses.length > 0
+          ? addresses[0].address
           : 'No address available',
-      ...getColumnSearchProps('addresses'),
     },
     {
       title: '',
@@ -230,7 +174,20 @@ const AdminUser = () => {
 
   return (
     <div style={{ width: '90%', margin: '0 auto' }}>
-      <Table columns={columns} dataSource={users} rowKey="_id" />
+      <Row gutter={16} style={{ marginBottom: 16 }}>
+        <Col>
+          <Input
+            placeholder="Tìm kiếm theo ID, tên, email, số điện thoại hoặc địa chỉ"
+            value={searchText}
+            onChange={handleSearch}
+            style={{ marginBottom: 20, width: 400 }}
+          />
+        </Col>
+      </Row>
+      <div style={{ marginBottom: 20, fontSize: 18 }}>
+        <strong>Tổng số lượng người dùng: {totalUsers}</strong>
+      </div>
+      <Table columns={columns} dataSource={filteredUsers} rowKey="_id" />
       <Modal
         title="Cập nhật thông tin"
         open={updateModalVisible}
@@ -254,7 +211,7 @@ const AdminUser = () => {
           </Form.Item>
           <Form.Item
             name="mobile"
-            label="mobile"
+            label="Mobile"
             rules={[{ required: true, message: 'Nhập số điện thoại' }]}
           >
             <Input onChange={(e) => setUserData({ ...userData, mobile: e.target.value })} />

@@ -42,7 +42,7 @@ export const BrandItem = styled.div`
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 4px #51C878;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   }
 `;
 

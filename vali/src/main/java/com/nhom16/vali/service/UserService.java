@@ -61,6 +61,21 @@ public class UserService {
         }
         return Optional.empty();
     }
+    public Map<String, String> changePassword(String userId, String oldPassword, String newPassword, String confirmPassword) {
+        User user = repo.findBy_id(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with this id: " + userId));
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("New passwords do not match");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repo.save(user);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password changed successfully");
+        return response;
+    }
 
     public void deleteUserById(String id) {
         repo.deleteById(id);

@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
-import java.util.Map;
+
 import java.util.*;
 import org.bson.types.ObjectId;
 
@@ -21,9 +20,16 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/save")
-    private ResponseEntity<User> saveUser(@RequestBody User user) {
-        userService.saveOrUpdate(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    private ResponseEntity<?> saveUser(@RequestBody User user) {
+        Optional<User> userOptional = userService.findByEmail(user.getEmail());
+        if (!userOptional.isPresent()) {
+            userService.saveOrUpdate(user);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Email đã tồn tại, vui lòng nhập email khác");
+        }
+
     }
 
     @GetMapping(value = "/getall")
@@ -64,12 +70,14 @@ public class UserController {
     }
 
     @GetMapping(value = "/getById/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
         Optional<User> userOptional = userService.getUserById(id);
         if (userOptional.isPresent()) {
             return ResponseEntity.ok(userOptional.get());
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Tài khoản không tồn tại");
+
         }
     }
 
@@ -96,6 +104,16 @@ public class UserController {
         }
     }
 
+    @PutMapping("/change-password/{userId}")
+    public ResponseEntity<Map<String, String>> changePassword(
+            @PathVariable("userId") String userId,
+            @RequestBody Map<String, String> passwordData) {
+        String oldPassword = passwordData.get("oldPassword");
+        String newPassword = passwordData.get("newPassword");
+        String confirmPassword = passwordData.get("confirmPassword");
+        return new ResponseEntity<>(userService.changePassword(userId, oldPassword, newPassword, confirmPassword), HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable("id") String id) {
         Optional<User> userOptional = userService.getUserById(id);
@@ -103,7 +121,7 @@ public class UserController {
             userService.deleteUserById(id);
             return ResponseEntity.ok("Người dùng đã được xóa thành công");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Tài khoản không tồn tại");
         }
     }
 

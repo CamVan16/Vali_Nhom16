@@ -39,9 +39,7 @@ const AppHeader = () => {
         setSearch(e.target.value);
     };
 
-    const goToCart = () => {
-        navigate("/CartProductPage", { state: location.pathname });
-    };
+
 
     const handleNavigateLogin = () => {
         navigate("/SignIn", { state: location.pathname });
@@ -80,9 +78,11 @@ const AppHeader = () => {
             <WrapperContentPopup onClick={() => handleClickNavigate("UserPage")}>
                 Thông tin người dùng
             </WrapperContentPopup>
-            <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
-                Quản lí hệ thống
-            </WrapperContentPopup>
+            {user?.isAdmin && (
+                <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
+                    Quản lí hệ thống
+                </WrapperContentPopup>
+            )}
             <WrapperContentPopup onClick={handleLogout}>
                 Đăng xuất
             </WrapperContentPopup>
@@ -162,33 +162,32 @@ const AppHeader = () => {
                     <span style={{ color: "#fff" }}>Sản phẩm</span>
                 </div>
                 {user ? (
-                    <Popover content={content} trigger="click" open={isOpenPopup} className="hover-opacity"
-                    >
-                        <div
-                            style={{
-                                cursor: "pointer",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                display: "flex",
-                            }}
-                            onClick={() => setIsOpenPopup((prev) => !prev)}
+                    <>
+                        {console.log("is admin? : ", user?.isAdmin)}
+                        <Popover content={content} trigger="click" open={isOpenPopup} className="hover-opacity"
                         >
-                            <div
+                            <div className="hover-opacity"
+
                                 style={{
-                                    width: "36px",
-                                    height: "36px",
-                                    objectFit: "cover",
-                                    marginRight: "16px",
-                                    borderRadius: "50%",
+                                    cursor: "pointer",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    display: "flex",
+                                    padding: "8px 16px",
+                                    maxHeight: 36,
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                 }}
+                                onClick={() => setIsOpenPopup((prev) => !prev)}
                             >
-                                {/* Avatar handling logic here */}
+
+                                <span style={{ color: "#fff" }}>
+                                    {user.username ? user.username : user.email}
+                                </span>
                             </div>
-                            <span style={{ color: "#fff" }}>
-                                {user.username ? user.username : user.email}
-                            </span>
-                        </div>
-                    </Popover>
+                        </Popover>
+                    </>
+
                 ) : (
                     <div
                         style={{
@@ -209,7 +208,7 @@ const AppHeader = () => {
                     </div>
                 )}
                 <Badge size="small">
-                    <Cart/>
+                    <Cart />
                 </Badge>
             </div>
         </Header>

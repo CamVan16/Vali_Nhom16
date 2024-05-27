@@ -33,11 +33,14 @@ const SignIn = () => {
                 body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
+            console.log("data received: ", data);
+
             if (data._id) {
                 message.success('Login success');
                 setCheck(true);
-                const id = data._id; // Lấy _id từ dữ liệu trả về
-                localStorage.setItem('userID', id);
+                const _id = data._id;
+                localStorage.setItem('userID', _id);
+                
                 if (rememberMe) { // Kiểm tra trạng thái của checkbox
                     localStorage.setItem('rememberMe', 'true');
                     localStorage.setItem('email', email); // Lưu lại thông tin đăng nhập nếu được chọn
@@ -45,7 +48,8 @@ const SignIn = () => {
                     localStorage.removeItem('rememberMe');
                     localStorage.removeItem('email'); // Xóa thông tin đăng nhập nếu không được chọn
                 }
-                dispatch(updateUser(data)); // Dispatch action to update Redux state
+                
+                dispatch(updateUser(data)); 
                 if (location?.state) {
                     navigate(location.state);
                 } else {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, message } from 'antd';
-import { StyleInput, WrapperContainer, StyleFormContainer, StyledButton, StyledHeading } from './style';
+import { StyleInput, WrapperContainer, StyleFormContainer, StyledButton, StyledHeading, StyleInputPassword } from './style';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
@@ -13,6 +13,12 @@ const SignUp = () => {
         password: '',
         confirmPassword: ''
     });
+    const [passwordMatch, setPasswordMatch] = useState(true);
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/;
+    const [validatePass, setvalidatePass] = useState(true);
+    const [emailExistError, setEmailExistError] = useState(true);
+    const [usernameExistError, setUsernameExistError] = useState(true);
+
 
     const handleChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,10 +26,14 @@ const SignUp = () => {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            message.error('Passwords do not match!');
+        if (!passwordRegex.test(formData.password)) {
+            setvalidatePass(false);
+            setUsernameExistError(true);
+            setEmailExistError(true);
+            setPasswordMatch(true);
             return;
         }
+
 
         const { username, email, address, mobile, password } = formData;
 
@@ -37,12 +47,35 @@ const SignUp = () => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/user/save', userData);
-            console.log(response.data);
-            message.success('User registered successfully!');
-            window.location.href = '/SignIn';
+            //console.log(response.data);
+            if (response.status === 201) {
+                setFormData({
+                    username: '',
+                    email: '',
+                    address: '',
+                    mobile: '',
+                    password: '',
+                    confirmPassword: '',
+                });
+                message.success('User registered successfully!');
+                window.location.href = '/SignIn';
+            }
         } catch (error) {
-            console.error('Error:', error);
-            message.error('Registration failed!');
+            if (error.response) {
+                if (error.response.status === 409) {
+                    if (error.response.data === 'Email đã tồn tại, vui lòng nhập email khác') {
+                        setEmailExistError(false);
+                        setUsernameExistError(true);
+                    } else if (error.response.data === 'Tên tài khoản đã tồn tại, vui lòng nhập tên khác') {
+                        setUsernameExistError(false);
+                        setEmailExistError(true);
+                    }
+                } else {
+                    message.error('Đăng kí không thành công.');
+                }
+            } else {
+                message.error('Đã có lỗi xảy ra');
+            }
         }
     };
 
@@ -63,6 +96,7 @@ const SignUp = () => {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}>
                         <StyleInput name="username" onChange={handleChange} />
+                        {!usernameExistError && <p style={{ color: 'red', margin: '5px 0 0 0' }}>tài khoản đã tồn tại</p>}
                     </Form.Item>
                     <Form.Item
                         label="Email"
@@ -76,6 +110,7 @@ const SignUp = () => {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}>
                         <StyleInput name="email" onChange={handleChange} />
+                        {!emailExistError && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Email đã tồn tại</p>}
                     </Form.Item>
                     <Form.Item
                         label="Địa chỉ"
@@ -114,7 +149,9 @@ const SignUp = () => {
                         ]}
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}>
-                        <StyleInput name="password" type="password" onChange={handleChange} />
+                        <StyleInputPassword name="password" type="password" onChange={handleChange} />
+                        {!validatePass && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Mật khẩu phải chứa ít nhất 8 kí tự bao gồm kí tự hoa, kí tự thường, chữ số và kí tự đặc biệt</p>}
+
                     </Form.Item>
                     <Form.Item
                         label="Nhập lại mật khẩu"
@@ -127,7 +164,8 @@ const SignUp = () => {
                         ]}
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}>
-                        <StyleInput name="confirmPassword" type="password" onChange={handleChange} />
+                        <StyleInputPassword name="confirmPassword" type="password" onChange={handleChange} />
+                        {!passwordMatch && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Mật khẩu xác nhận không khớp</p>}
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                         <StyledButton type="primary" htmlType="submit" onClick={handleSubmit}>Đăng ký</StyledButton>
