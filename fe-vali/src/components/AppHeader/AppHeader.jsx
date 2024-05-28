@@ -64,6 +64,8 @@ const AppHeader = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("userID");
+        localStorage.removeItem("isAdmin");
+
         setUser(null);
         navigate("/");
     };

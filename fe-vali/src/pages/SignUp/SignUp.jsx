@@ -15,10 +15,8 @@ const SignUp = () => {
     });
     const [passwordMatch, setPasswordMatch] = useState(true);
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/;
-    const [validatePass, setvalidatePass] = useState(true);
+    const [validatePass, setValidatePass] = useState(true);
     const [emailExistError, setEmailExistError] = useState(true);
-    const [usernameExistError, setUsernameExistError] = useState(true);
-
 
     const handleChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,13 +25,18 @@ const SignUp = () => {
     const handleSubmit = async e => {
         e.preventDefault();
         if (!passwordRegex.test(formData.password)) {
-            setvalidatePass(false);
-            setUsernameExistError(true);
+            setValidatePass(false);
             setEmailExistError(true);
             setPasswordMatch(true);
             return;
         }
 
+        if (formData.password !== formData.confirmPassword) {
+            setPasswordMatch(false);
+            setValidatePass(true);
+            setEmailExistError(true);
+            return;
+        }
 
         const { username, email, address, mobile, password } = formData;
 
@@ -47,7 +50,6 @@ const SignUp = () => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/user/save', userData);
-            //console.log(response.data);
             if (response.status === 201) {
                 setFormData({
                     username: '',
@@ -63,13 +65,12 @@ const SignUp = () => {
         } catch (error) {
             if (error.response) {
                 if (error.response.status === 409) {
-                    if (error.response.data === 'Email đã tồn tại, vui lòng nhập email khác') {
+                    const responseData = error.response.data;
+                    if (responseData === 'Email đã tồn tại, vui lòng nhập email khác') {
                         setEmailExistError(false);
-                        setUsernameExistError(true);
-                    } else if (error.response.data === 'Tên tài khoản đã tồn tại, vui lòng nhập tên khác') {
-                        setUsernameExistError(false);
-                        setEmailExistError(true);
-                    }
+                        setPasswordMatch(true);
+                        setValidatePass(true);
+                    } 
                 } else {
                     message.error('Đăng kí không thành công.');
                 }
@@ -96,7 +97,6 @@ const SignUp = () => {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}>
                         <StyleInput name="username" onChange={handleChange} />
-                        {!usernameExistError && <p style={{ color: 'red', margin: '5px 0 0 0' }}>tài khoản đã tồn tại</p>}
                     </Form.Item>
                     <Form.Item
                         label="Email"
@@ -151,7 +151,6 @@ const SignUp = () => {
                         wrapperCol={{ span: 16 }}>
                         <StyleInputPassword name="password" type="password" onChange={handleChange} />
                         {!validatePass && <p style={{ color: 'red', margin: '5px 0 0 0' }}>Mật khẩu phải chứa ít nhất 8 kí tự bao gồm kí tự hoa, kí tự thường, chữ số và kí tự đặc biệt</p>}
-
                     </Form.Item>
                     <Form.Item
                         label="Nhập lại mật khẩu"
@@ -171,7 +170,6 @@ const SignUp = () => {
                         <StyledButton type="primary" htmlType="submit" onClick={handleSubmit}>Đăng ký</StyledButton>
                     </Form.Item>
                     <p style={{ textAlign: 'center' }}>Đã có tài khoản? <Link to="/SignIn">Đăng nhập</Link></p>
-
                 </Form>
             </StyleFormContainer>
         </WrapperContainer>

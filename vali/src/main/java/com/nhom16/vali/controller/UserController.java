@@ -20,14 +20,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/save")
-    private ResponseEntity<?> saveUser(@RequestBody User user) {
-        Optional<User> userOptional = userService.findByEmail(user.getEmail());
-        if (!userOptional.isPresent()) {
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+        Optional<User> emailOptional = userService.findByEmail(user.getEmail());
+        if (emailOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Email đã tồn tại, vui lòng nhập email khác");
+        }
+        {
             userService.saveOrUpdate(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Email đã tồn tại, vui lòng nhập email khác");
         }
 
     }

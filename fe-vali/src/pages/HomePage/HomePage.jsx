@@ -17,7 +17,7 @@ const searchButtonHoverStyles = {
   backgroundColor: '#02ce83',
   borderColor: '#02ce83',
   color: '#fff',
-  weight:'25px',
+  weight:'35px',
 
 };
 const HomePage = () => {

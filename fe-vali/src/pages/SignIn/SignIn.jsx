@@ -40,7 +40,10 @@ const SignIn = () => {
                 setCheck(true);
                 const _id = data._id;
                 localStorage.setItem('userID', _id);
-                
+                const isAdmin = data.isAdmin;
+                if(isAdmin){
+                    localStorage.setItem('isAdmin', isAdmin);
+                }
                 if (rememberMe) { // Kiểm tra trạng thái của checkbox
                     localStorage.setItem('rememberMe', 'true');
                     localStorage.setItem('email', email); // Lưu lại thông tin đăng nhập nếu được chọn
