@@ -14,17 +14,20 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // tạo sản phẩm
     @PostMapping(value = "/save")
     private String saveProduct(@RequestBody Product product) {
         productService.saveOrUpdate(product);
         return product.getId();
     }
 
+    // lấy danh sách các sản phẩm
     @GetMapping(value = "/getall")
     public Iterable<Product> getProducts() {
         return productService.listAllProducts();
     }
 
+    // lấy sản phẩm theo id
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") String id) {
         Product product = productService.getProductById(id);
@@ -35,6 +38,7 @@ public class ProductController {
         }
     }
 
+    // cập nhật sản phẩm
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @RequestBody Product productDetails) {
         Product product = productService.getProductById(id);
@@ -52,6 +56,7 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    // xoá
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         Product product = productService.getProductById(id);

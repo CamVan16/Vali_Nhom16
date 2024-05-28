@@ -5,12 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "payment")
 public class Payment {
+    // thành phần dữ liệu
     @Id
     private String id;
     private String status;
     private String message;
     private String url;
 
+    // thành phần phương thức
     public Payment() {
     }
 

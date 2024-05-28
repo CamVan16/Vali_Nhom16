@@ -7,6 +7,7 @@ import java.util.Map;
 
 @Document(collection = "products")
 public class Product {
+    // thành phần dữ liệu
     @Id
     private String id;
     private String name;
@@ -17,6 +18,7 @@ public class Product {
     private Map<String, Map<String, Integer>> stock;
     private Description description;
 
+    // thành phần phương thức
     public Product(String id, String name, String type, Map<String, String> img,
             Map<String, Double> price, int discount, Map<String, Map<String, Integer>> stock, Description description) {
         this.id = id;

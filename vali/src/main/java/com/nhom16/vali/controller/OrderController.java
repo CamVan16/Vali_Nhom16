@@ -19,6 +19,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    // tạo order
     @PostMapping(value = "/save")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         try {
@@ -30,12 +31,14 @@ public class OrderController {
         }
     }
 
+    // lấy danh sách các order
     @GetMapping(value = "/getall")
     public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 
+    // lấy order theo id
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable String id) {
         return orderService.getOrderById(id)
@@ -43,6 +46,7 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // lấy lịch sử order
     @GetMapping("/orderHis/{userId}")
     public ResponseEntity<List<Order>> getOrderByUserId(@PathVariable String userId) {
         return orderService.getOrderByUserId(userId)
@@ -50,33 +54,29 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Confirm Payment for VNPAY endpoint
+    // xác nhận payment
     @PostMapping("/confirmPayment")
     public ResponseEntity<String> confirmPayment(@RequestParam Map<String, String> allParams) {
         String vnp_ResponseCode = allParams.get("vnp_ResponseCode");
         if ("00".equals(vnp_ResponseCode)) {
-            // Payment success
-            String orderId = allParams.get("vnp_TxnRef"); // Assuming order ID is passed in vnp_TxnRef
+            // Payment thành công
+            String orderId = allParams.get("vnp_TxnRef");
             Optional<Order> optionalOrder = orderService.getOrderById(orderId);
             if (optionalOrder.isPresent()) {
                 Order order = optionalOrder.get();
                 order.setPaymentStatus("Đã thanh toán");
                 order.setShippingStatus("Chưa nhận hàng");
                 orderService.createOrder(order);
-
-                // Clear items from cart
-                // Logic to clear selected items from the cart
                 return ResponseEntity.ok("Payment confirmed and order saved.");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
             }
         } else {
-            // Payment failed
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed.");
         }
     }
 
-    // Create Order for VNPAY Payment endpoint
+    // tạo order với vnpay
     @PostMapping("/createVNPAYOrder")
     public ResponseEntity<Order> createVNPAYOrder(@RequestBody Order order) {
         try {
@@ -89,6 +89,7 @@ public class OrderController {
         }
     }
 
+    // cập nhật trạng thái
     @PostMapping("/updatePaymentStatus")
     public ResponseEntity<Void> updatePaymentStatus(@RequestBody Map<String, String> paymentStatusUpdate) {
         try {
@@ -101,6 +102,7 @@ public class OrderController {
         }
     }
 
+    // cập nhật các trạng thái của order
     @PutMapping("/update/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable String id, @RequestBody Order orderDetails) {
         Optional<Order> optionalOrder = orderService.getOrderById(id);
@@ -115,6 +117,7 @@ public class OrderController {
         }
     }
 
+    // xoá
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
         orderService.deleteOrder(id);

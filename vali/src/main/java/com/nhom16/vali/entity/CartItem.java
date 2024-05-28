@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "cartItems")
 public class CartItem {
+    // thành phần dữ liệu
     @Id
     private String id;
     private String productId;
@@ -13,8 +14,9 @@ public class CartItem {
     private String size;
     private int quantity;
 
+    // thành phần phương thức
     public CartItem(String id, String productId, String color, String size, int quantity) {
-        this.id = id != null ? id : new ObjectId().toString(); // Auto-generate ID if null
+        this.id = id != null ? id : new ObjectId().toString();
         this.productId = productId;
         this.color = color;
         this.size = size;

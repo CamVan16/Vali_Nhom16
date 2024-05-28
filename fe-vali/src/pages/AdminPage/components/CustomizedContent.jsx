@@ -1,6 +1,5 @@
 import { FormOutlined } from "@ant-design/icons";
 const CustomizedContent = ({ data, colors, setKeySelected }) => {
-  // Check if data is undefined or null
   if (!data) return null;
 
   return (

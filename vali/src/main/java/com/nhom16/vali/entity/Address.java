@@ -3,13 +3,15 @@ package com.nhom16.vali.entity;
 import org.bson.types.ObjectId;
 
 public class Address {
+    // thành phần dữ liệu
     private String id;
     private String name;
     private String address;
     private String mobile;
 
+    // thành phần phương thức
     public Address(String id, String name, String address, String mobile) {
-        this.id = id != null ? id : new ObjectId().toString(); // Auto-generate ID if null
+        this.id = id != null ? id : new ObjectId().toString();
         this.name = name;
         this.address = address;
         this.mobile = mobile;
@@ -24,7 +26,7 @@ public class Address {
     }
 
     public void setId(String id) {
-        this.id = id != null ? id : new ObjectId().toString(); // Auto-generate ID if null
+        this.id = id != null ? id : new ObjectId().toString();
     }
 
     public String getName() {

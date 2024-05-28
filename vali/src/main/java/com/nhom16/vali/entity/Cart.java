@@ -8,11 +8,13 @@ import java.util.List;
 
 @Document(collection = "carts")
 public class Cart {
+    // thành phần dữ liệu
     @Id
     private String id;
     private String userId;
     private List<CartItem> items = new ArrayList<>();
 
+    // thành phần phương thức
     public Cart(String id, String userId, List<CartItem> items) {
         this.id = id;
         this.userId = userId;

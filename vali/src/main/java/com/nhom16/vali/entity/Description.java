@@ -1,6 +1,7 @@
 package com.nhom16.vali.entity;
 
 public class Description {
+    // thành phần dữ liệu
     private String branch;
     private String material;
     private String weight;
@@ -10,6 +11,7 @@ public class Description {
     private String key;
     private String warranty;
 
+    // thành phần phương thức
     public Description(String branch, String material, String weight, String size, String volume, String wheel,
             String key, String warranty) {
         this.branch = branch;

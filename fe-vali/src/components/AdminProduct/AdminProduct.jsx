@@ -148,12 +148,12 @@ const AdminProduct = () => {
       if (!response.ok) {
         throw new Error(isEditing ? 'Failed to update product' : 'Failed to add product');
       }
-      message.success(isEditing ? 'Product updated successfully' : 'Product added successfully');
+      //message.success(isEditing ? 'Product updated successfully' : 'Product added successfully');
       fetchProducts();
       handleCloseModal();
     } catch (error) {
       console.error('Error saving product:', error);
-      message.error(isEditing ? 'Failed to update product' : 'Failed to add product');
+      //message.error(isEditing ? 'Failed to update product' : 'Failed to add product');
     }
   };
   const handleDelete = (id) => {
@@ -167,11 +167,11 @@ const AdminProduct = () => {
           if (!response.ok) {
             throw new Error('Failed to delete product');
           }
-          message.success('Product deleted successfully');
+          //message.success('Product deleted successfully');
           fetchProducts();
         } catch (error) {
           console.error('Error deleting product:', error);
-          message.error('Failed to delete product');
+          //message.error('Failed to delete product');
         }
       },
       onCancel() {

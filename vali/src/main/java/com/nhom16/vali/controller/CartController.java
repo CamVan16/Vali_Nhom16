@@ -19,11 +19,12 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    // thêm sản phẩm vào cart của user
     @PostMapping(value = "/{userId}/add")
     public ResponseEntity<?> addItemToCart(@PathVariable String userId, @RequestBody CartItem cartItem) {
         Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
 
-        boolean itemExists = false; // Thêm biến để theo dõi trạng thái tồn tại của mục
+        boolean itemExists = false; // kiểm tra trạng thái tồn tại của mục
 
         if (cartOptional.isPresent()) {
             Cart cart = cartOptional.get();
@@ -36,7 +37,7 @@ public class CartController {
                         item.getColor().equals(cartItem.getColor()) &&
                         item.getSize().equals(cartItem.getSize())) {
                     item.setQuantity(item.getQuantity() + cartItem.getQuantity());
-                    itemExists = true; // Đánh dấu là đã tồn tại
+                    itemExists = true;
                     break;
                 }
             }
@@ -57,6 +58,7 @@ public class CartController {
         }
     }
 
+    // lấy giỏ hàng
     @GetMapping(value = "/{userId}")
     public ResponseEntity<Cart> getCartByUserId(@PathVariable String userId) {
         Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
@@ -67,6 +69,7 @@ public class CartController {
         }
     }
 
+    // xoá item ra khỏi giỏ hàng
     @DeleteMapping(value = "/{userId}/item/{itemId}")
     public ResponseEntity<?> removeItemFromCart(@PathVariable String userId, @PathVariable String itemId) {
         Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
@@ -81,6 +84,7 @@ public class CartController {
         }
     }
 
+    // Xoá giỏ hàng
     @DeleteMapping(value = "/{userId}")
     public ResponseEntity<?> clearCart(@PathVariable String userId) {
         Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
@@ -93,6 +97,7 @@ public class CartController {
         }
     }
 
+    // cập nhật
     @PostMapping("/{userId}/update")
     public ResponseEntity<?> updateItemInCart(@PathVariable String userId, @RequestBody CartItem cartItem) {
         Optional<Cart> cartOptional = cartService.getCartByUserId(userId);
@@ -115,6 +120,7 @@ public class CartController {
         }
     }
 
+    // xoá item
     @PostMapping(value = "/{userId}/removeItems")
     public ResponseEntity<?> removeSelectedItemsFromCart(@PathVariable String userId,
             @RequestBody List<String> itemIds) {

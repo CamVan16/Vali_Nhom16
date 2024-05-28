@@ -6,6 +6,7 @@ import java.util.List;
 
 @Document(collection = "users")
 public class User {
+    //thành phần dữ liệu
     @Id
     private String _id;
     private String username;
@@ -15,7 +16,7 @@ public class User {
     private String password;
     private boolean isAdmin;
     
-
+    //thành phần phương thức
     public User(String _id, String username, String email, List<Address> addresses, String mobile, String password, boolean isAdmin) {
         this._id = _id;
         this.username = username;

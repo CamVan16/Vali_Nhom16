@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { List, Button, notification, Select, InputNumber, Checkbox } from 'antd';
 import { useCart } from '../../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 const { Option } = Select;
 
 const CartProductPage = () => {
@@ -26,7 +25,7 @@ const CartProductPage = () => {
         }
       } catch (error) {
         console.error('Error fetching cart items:', error);
-        notification.error({ message: `Failed to fetch cart items: ${error.message}` });
+        //notification.error({ message: `Failed to fetch cart items: ${error.message}` });
       }
     };
 
@@ -43,7 +42,7 @@ const CartProductPage = () => {
           }
         } catch (error) {
           console.error('Error fetching product details:', error);
-          notification.error({ message: `Failed to fetch product details: ${error.message}` });
+          //notification.error({ message: `Failed to fetch product details: ${error.message}` });
         }
       }
       setProductDetails(details);
@@ -64,10 +63,10 @@ const CartProductPage = () => {
       }
 
       setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-      notification.success({ message: 'Product removed from cart successfully' });
+      //notification.success({ message: 'Product removed from cart successfully' });
     } catch (error) {
       console.error('Error removing product from cart:', error);
-      notification.error({ message: `Failed to remove product from cart: ${error.message}` });
+      //notification.error({ message: `Failed to remove product from cart: ${error.message}` });
     }
   };
 
@@ -88,10 +87,10 @@ const CartProductPage = () => {
 
       const updatedCartItems = await response.json();
       setCartItems(updatedCartItems.items);
-      notification.success({ message: 'Cart updated successfully' });
+      //notification.success({ message: 'Cart updated successfully' });
     } catch (error) {
       console.error('Error updating cart:', error);
-      notification.error({ message: `Failed to update cart item: ${error.message}` });
+      //notification.error({ message: `Failed to update cart item: ${error.message}` });
     }
   };
 
@@ -142,10 +141,6 @@ const CartProductPage = () => {
       return total + (discountedPrice * item.quantity);
     }, 0);
   };
-
-  // const handleCheckout = () => {
-  //   navigate('/OrderPage', { state: { selectedItems } });
-  // };
   const handleCheckout = () => {
     const selectedProductDetails = selectedItems.map(itemId => {
       const item = cartItems.find(item => item.id === itemId);

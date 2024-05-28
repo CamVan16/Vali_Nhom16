@@ -89,10 +89,10 @@ const ProductInfo = ({ id, name, price, discount, img = {}, sizes = [], stock = 
         incrementItemCount();
       }
 
-      notification.success({ message: 'Product added to cart successfully' });
+      //notification.success({ message: 'Product added to cart successfully' });
     } catch (error) {
       console.error('Error adding product to cart:', error);
-      notification.error({ message: `Failed to add product to cart: ${error.message}` });
+      //notification.error({ message: `Failed to add product to cart: ${error.message}` });
     }
   };
 

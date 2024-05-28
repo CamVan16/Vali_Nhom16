@@ -15,7 +15,7 @@ const DetailProduct = () => {
       .then(response => response.json())
       .then(data => {
         setProduct(data);
-        setSelectedImage(Object.values(data.img)[0]); // Set the first image as the default
+        setSelectedImage(Object.values(data.img)[0]);
       })
       .catch(error => console.error('Error fetching product details:', error));
   }, [id]);

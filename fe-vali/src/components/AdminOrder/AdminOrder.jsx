@@ -89,12 +89,12 @@ const AdminOrder = () => {
       if (!response.ok) {
         throw new Error('Failed to update order');
       }
-      message.success('Order updated successfully');
+      //message.success('Order updated successfully');
       fetchOrders();
       handleCloseModal();
     } catch (error) {
       console.error('Error updating order:', error);
-      message.error('Failed to update order');
+      //message.error('Failed to update order');
     }
   };
 
@@ -109,11 +109,11 @@ const AdminOrder = () => {
           if (!response.ok) {
             throw new Error('Failed to delete order');
           }
-          message.success('Order deleted successfully');
+          //message.success('Order deleted successfully');
           fetchOrders();
         } catch (error) {
           console.error('Error deleting order:', error);
-          message.error('Failed to delete order');
+          //message.error('Failed to delete order');
         }
       },
       onCancel() {

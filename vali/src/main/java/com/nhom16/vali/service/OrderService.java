@@ -2,7 +2,6 @@ package com.nhom16.vali.service;
 
 import com.nhom16.vali.entity.Order;
 import com.nhom16.vali.entity.CartItem;
-//import com.nhom16.vali.entity.Product;
 import com.nhom16.vali.repository.OrderRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ public class OrderService {
 
     public Order createOrder(Order order) {
         Order savedOrder = orderRepo.save(order);
-        // Only update stock if the payment method is not COD
         if (!"Thanh toán khi nhận hàng".equals(order.getPaymentMethod())) {
             updateProductStock(savedOrder.getCartItems());
         }
@@ -86,8 +84,6 @@ public class OrderService {
             Order order = optionalOrder.get();
             order.setPaymentStatus(orderDetails.getPaymentStatus());
             order.setShippingStatus(orderDetails.getShippingStatus());
-            // Cập nhật các trường khác nếu cần thiết
-            // order.setField(orderDetails.getField());
             return orderRepo.save(order);
         } else {
             throw new RuntimeException("Order not found");

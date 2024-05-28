@@ -115,11 +115,9 @@ public class PaymentController {
                 Order order = optionalOrder.get();
                 order.setPaymentStatus("Đã thanh toán");
                 orderRepo.save(order);
-
                 // Chuyển hướng đến trang CartProductPage nếu thanh toán thành công
                 return new RedirectView("http://localhost:3000/CartProductPage");
             } else {
-                // Trả về lỗi 404 nếu không tìm thấy đơn hàng
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found.");
             }
         } else {
