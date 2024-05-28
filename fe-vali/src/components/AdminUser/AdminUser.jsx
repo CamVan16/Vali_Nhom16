@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button, Table, Modal, Form, Input, message, Row, Col } from 'antd';
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
+import React, { useState, useEffect} from 'react';
+import { Table, Modal, Form, Input, message, Row, Col } from 'antd';
+import { DeleteOutlined, EditOutlined} from '@ant-design/icons';
 
 const AdminUser = () => {
   const [users, setUsers] = useState([]);
@@ -65,11 +65,9 @@ const AdminUser = () => {
       await fetch(`http://localhost:8080/api/v1/user/delete/${deleteUserId}`, {
         method: 'DELETE',
       });
-      message.success('User deleted successfully');
       fetchUserData();
     } catch (error) {
       console.error(error);
-      message.error('An error occurred while deleting user');
     } finally {
       setDeleteModalVisible(false);
     }
@@ -117,7 +115,6 @@ const AdminUser = () => {
       });
       const data = await response.json();
       if (data._id) {
-        message.success('User updated successfully');
         setUpdateModalVisible(false);
         fetchUserData();
       } else {
@@ -125,7 +122,6 @@ const AdminUser = () => {
       }
     } catch (error) {
       console.error(error);
-      message.error('An error occurred while updating user');
     }
   };
 

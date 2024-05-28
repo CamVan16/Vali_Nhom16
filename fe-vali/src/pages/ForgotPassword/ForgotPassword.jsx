@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, message } from 'antd';
-import { StyleContainer, StyleLeftCon, StyleRightCon, StyleInput } from './style';
+import { WrapperContainer, StyleFormContainer, StyleInput, StyledButton, StyledHeading } from './style';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
@@ -43,18 +43,9 @@ const ForgotPassword = () => {
     };
 
     return (
-        <StyleContainer>
-            <StyleLeftCon>
-                <img
-                    src='https://i.pinimg.com/564x/64/c3/6b/64c36b10d3e8904e6a23fc59ed3ca060.jpg'
-                    alt='gear'
-                    style={{ width: '300px', height: '300px', borderRadius: '50%' }}
-                />
-                <h4 style={{ textAlign: 'center', color: '#1677FF' }}>Chào mừng đến với GearShop</h4>
-                <h6 style={{ textAlign: 'center', margin: '0', color: '#1677FF' }}>Chất lượng tốt, giá thành tốt, ưu đãi cực vui</h6>
-            </StyleLeftCon>
-            <StyleRightCon>
-                <h4 style={{ display: 'flex', color: '#1A93FF', textAlign: 'center' }}>Vui lòng nhập email đã đăng ký để lấy lại mật khẩu</h4>
+        <WrapperContainer>
+            <StyleFormContainer>
+                <StyledHeading>Quên mật khẩu</StyledHeading>
                 <Form form={form}>
                     <Form.Item
                         label="Email"
@@ -72,16 +63,16 @@ const ForgotPassword = () => {
                     >
                         <StyleInput />
                     </Form.Item>
-                    <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
-                        <Button type="primary" onClick={handleSendEmail} loading={loading}>
+                    <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+                        <StyledButton type="primary" onClick={handleSendEmail} loading={loading}>
                             Gửi
-                        </Button>
+                        </StyledButton>
                     </Form.Item>
 
                     <p style={{ textAlign: 'center' }}>Chưa có tài khoản? <Link to="/SignUp">Đăng ký</Link></p>
                 </Form>
-            </StyleRightCon>
-        </StyleContainer>
+            </StyleFormContainer>
+        </WrapperContainer>
     );
 };
 

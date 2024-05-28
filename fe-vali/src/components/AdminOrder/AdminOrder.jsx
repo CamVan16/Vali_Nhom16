@@ -89,12 +89,10 @@ const AdminOrder = () => {
       if (!response.ok) {
         throw new Error('Failed to update order');
       }
-      //message.success('Order updated successfully');
       fetchOrders();
       handleCloseModal();
     } catch (error) {
       console.error('Error updating order:', error);
-      //message.error('Failed to update order');
     }
   };
 
@@ -109,11 +107,9 @@ const AdminOrder = () => {
           if (!response.ok) {
             throw new Error('Failed to delete order');
           }
-          //message.success('Order deleted successfully');
           fetchOrders();
         } catch (error) {
           console.error('Error deleting order:', error);
-          //message.error('Failed to delete order');
         }
       },
       onCancel() {
@@ -277,6 +273,9 @@ const AdminOrder = () => {
             </Form.Item>
             <Form.Item label="Ghi chú" name="notes">
               <Input disabled />
+            </Form.Item>
+            <Form.Item label="Thời gian tạo" name="createdAt">
+              <Input disabled value={new Date(selectedOrder.createdAt).toLocaleString()} />
             </Form.Item>
             <Form.Item label="Trạng thái thanh toán" name="paymentStatus">
               <Select>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Input, Typography, Divider, Space, message, Radio, notification } from 'antd';
+import { Button, Modal, Input, Typography, Divider, Space, message, Radio} from 'antd';
 import { HomeOutlined, ShoppingCartOutlined, CreditCardOutlined, MessageOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { StyledLayout, StyledContent, StyledTable } from './style';
@@ -33,7 +33,6 @@ const OrderPage = () => {
           setSelectedAddress(data.addresses[0]);
         }
       } catch (error) {
-        //message.error('Failed to fetch user information');
         console.error('Fetch user failed:', error);
       }
     };
@@ -44,7 +43,6 @@ const OrderPage = () => {
   const handleAddAddress = async () => {
     try {
       if (!newAddress.name || !newAddress.address || !newAddress.mobile) {
-        //message.error('Vui lòng nhập đầy đủ thông tin địa chỉ');
         return;
       }
 
@@ -61,7 +59,6 @@ const OrderPage = () => {
       setModalVisible(false);
       setNewAddress({ name: '', address: '', mobile: '' });
     } catch (error) {
-      //message.error('Failed to add new address');
       console.error('Failed to add new address:', error);
     }
   };
@@ -101,9 +98,7 @@ const OrderPage = () => {
         body: JSON.stringify(selectedItems.map(item => item.id)),
       });
       if (!response.ok) throw new Error('Failed to clear selected items');
-      //message.success('Selected items cleared');
     } catch (error) {
-      //message.error('Failed to clear selected items');
       console.error('Failed to clear selected items:', error);
     }
   };
@@ -160,7 +155,6 @@ const OrderPage = () => {
         }, 2000);
       }
     } catch (error) {
-      //message.error('Failed to place order');
       console.error('Failed to place order:', error);
     }
   };
@@ -177,12 +171,8 @@ const OrderPage = () => {
         });
 
         if (!response.ok) throw new Error('Failed to confirm payment');
-
-        //message.success('Order placed successfully', 5);
-        // await clearSelectedItems();
         navigate("/CartProductPage");
       } catch (error) {
-        //message.error('Failed to confirm payment');
         console.error('Failed to confirm payment:', error);
       }
     } else {

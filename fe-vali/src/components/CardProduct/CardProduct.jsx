@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'antd';
 import { StyleName, StrikeThrough, DiscountPrice, DiscountPercent, StyledContent, StyleCard, StyleDis, StyledButton } from './style';
 import { Link } from 'react-router-dom';
 

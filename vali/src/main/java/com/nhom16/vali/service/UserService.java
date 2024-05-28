@@ -103,21 +103,6 @@ public class UserService {
         }
         return password.toString();
     }
-    // public String resetPassword(String email) {
-    // User user = repo.findByEmail(email)
-    // .orElseThrow(() -> new RuntimeException("User not found with this email: " +
-    // email));
-    // String newPassword = generateRandomPassword(10);
-    // user.setPassword(passwordEncoder.encode(newPassword));
-    // repo.save(user);
-    // try {
-    // emailUtil.sendNewPasswordEmail(email, newPassword);
-    // } catch (MessagingException e) {
-    // throw new RuntimeException("Unable to send new password email, please try
-    // again");
-    // }
-    // return "New password sent to your email";
-    // }
 
     public Map<String, String> resetPassword(String email) {
         User user = repo.findByEmail(email)

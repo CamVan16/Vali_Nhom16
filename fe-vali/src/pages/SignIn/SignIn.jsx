@@ -9,15 +9,14 @@ const SignIn = () => {
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [loginError, setLoginError] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const user = useSelector((state) => state.user);
 
-    const [check, setCheck] = useState(false);
     useEffect(() => {
-        // Xóa trạng thái lỗi email khi người dùng thay đổi giá trị email
-        setCheck(false);
+        setLoginError(false);
     }, [form.getFieldValue('email')]);
 
     const handleSignIn = async (values) => {
@@ -36,35 +35,34 @@ const SignIn = () => {
             console.log("data received: ", data);
 
             if (data._id) {
-                message.success('Login success');
-                setCheck(true);
+                setLoginError(false);
                 const _id = data._id;
                 localStorage.setItem('userID', _id);
                 const isAdmin = data.isAdmin;
-                if(isAdmin){
+                if (isAdmin) {
                     localStorage.setItem('isAdmin', isAdmin);
                 }
-                if (rememberMe) { // Kiểm tra trạng thái của checkbox
+                if (rememberMe) { 
                     localStorage.setItem('rememberMe', 'true');
-                    localStorage.setItem('email', email); // Lưu lại thông tin đăng nhập nếu được chọn
+                    localStorage.setItem('email', email);
                 } else {
                     localStorage.removeItem('rememberMe');
-                    localStorage.removeItem('email'); // Xóa thông tin đăng nhập nếu không được chọn
+                    localStorage.removeItem('email');
                 }
-                
-                dispatch(updateUser(data)); 
+
+                dispatch(updateUser(data));
                 if (location?.state) {
                     navigate(location.state);
                 } else {
-                    navigate('/UserPage');
+                    navigate('/');
                 }
             } else {
-                setCheck(true);
+                setLoginError(true);
                 message.error(data.message || 'Login fail');
             }
         } catch (error) {
+            setLoginError(true);
             console.error('Error during login:', error);
-            message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }
@@ -83,7 +81,7 @@ const SignIn = () => {
         if (rememberMeEnabled) {
             const rememberedUsername = localStorage.getItem('email');
             if (rememberedUsername) {
-                form.setFieldsValue({ email: rememberedUsername }); // Tự động điền tên đăng nhập vào trường nhập liệu
+                form.setFieldsValue({ email: rememberedUsername });
                 setRememberMe(true);
             }
         }
@@ -119,8 +117,8 @@ const SignIn = () => {
                         ]}
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 20 }}
-                        validateStatus={check ? 'error' : ''}
-                        help={check && 'Tài khoản hoặc mật khẩu không chính xác'}>
+                        validateStatus={loginError ? 'error' : ''}
+                        help={loginError && 'Tài khoản hoặc mật khẩu không chính xác'}>
                         <StyleInputPassword />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 4, span: 20 }}>

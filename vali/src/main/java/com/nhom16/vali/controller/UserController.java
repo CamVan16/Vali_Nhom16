@@ -38,21 +38,6 @@ public class UserController {
         return userService.listAllUsers();
     }
 
-    // @PostMapping(value = "/login")
-    // public ResponseEntity<?> loginUser(@RequestBody Map<String, String>
-    // loginData) {
-    // String email = loginData.get("email");
-    // String password = loginData.get("password");
-    // Optional<User> userOptional = userService.authenticateUser(email, password);
-    // if (userOptional.isPresent()) {
-    // User user = userOptional.get();
-    // return ResponseEntity.ok(user);
-    // } else {
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-    // .body("Đăng nhập thất bại. Vui lòng kiểm tra lại tên người dùng và mật
-    // khẩu.");
-    // }
-    // }
     @Autowired
     private JwtService JwtService;
 
@@ -127,35 +112,19 @@ public class UserController {
         }
     }
 
-    // @PostMapping(value = "/addAddress/{userId}")
-    // public ResponseEntity<User> addAddress(@PathVariable("userId") String userId,
-    // @RequestBody Address address) {
-    // Optional<User> userOptional = userService.getUserById(userId);
-    // if (userOptional.isPresent()) {
-    // User user = userOptional.get();
-    // if (address.getId() == null || address.getId().isEmpty()) {
-    // address.setId(new ObjectId().toString());
-    // }
-    // user.getAddresses().add(address);
-    // userService.saveOrUpdate(user);
-    // return ResponseEntity.ok(user);
-    // } else {
-    // return ResponseEntity.notFound().build();
-    // }
-    // }
     @PostMapping(value = "/addAddress/{userId}")
     public ResponseEntity<User> addAddress(@PathVariable("userId") String userId, @RequestBody Address address) {
         Optional<User> userOptional = userService.getUserById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getAddresses() == null) {
-                user.setAddresses(new ArrayList<>()); // Khởi tạo danh sách nếu chưa tồn tại
+                user.setAddresses(new ArrayList<>());
             }
             if (address.getId() == null || address.getId().isEmpty()) {
-                address.setId(new ObjectId().toString()); // Set ID if null or empty
+                address.setId(new ObjectId().toString());
             }
-            user.getAddresses().add(address); // Thêm địa chỉ mới vào danh sách
-            userService.saveOrUpdate(user); // Lưu thông tin người dùng đã được cập nhật
+            user.getAddresses().add(address);
+            userService.saveOrUpdate(user);
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.notFound().build();

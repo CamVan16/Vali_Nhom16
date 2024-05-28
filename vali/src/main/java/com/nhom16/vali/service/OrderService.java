@@ -5,7 +5,7 @@ import com.nhom16.vali.entity.CartItem;
 import com.nhom16.vali.repository.OrderRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +20,7 @@ public class OrderService {
     private ProductService productService;
 
     public Order createOrder(Order order) {
+        order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepo.save(order);
         if (!"Thanh toán khi nhận hàng".equals(order.getPaymentMethod())) {
             updateProductStock(savedOrder.getCartItems());

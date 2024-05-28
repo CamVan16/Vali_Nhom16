@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Dropdown, Button, Input, Popover, Badge } from "antd";
-import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { Layout, Popover, Badge } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.css";

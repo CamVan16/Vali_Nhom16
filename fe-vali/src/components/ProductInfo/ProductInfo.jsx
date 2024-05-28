@@ -60,7 +60,7 @@ const ProductInfo = ({ id, name, price, discount, img = {}, sizes = [], stock = 
     }
 
     if (!selectedColor || !selectedSize) {
-      notification.error({ message: 'Vui lòng chọn màu sắc và kích thước' });
+      //notification.error({ message: 'Vui lòng chọn màu sắc và kích thước' });
       return;
     }
 
@@ -88,11 +88,8 @@ const ProductInfo = ({ id, name, price, discount, img = {}, sizes = [], stock = 
       if (!itemExists) {
         incrementItemCount();
       }
-
-      //notification.success({ message: 'Product added to cart successfully' });
     } catch (error) {
       console.error('Error adding product to cart:', error);
-      //notification.error({ message: `Failed to add product to cart: ${error.message}` });
     }
   };
 

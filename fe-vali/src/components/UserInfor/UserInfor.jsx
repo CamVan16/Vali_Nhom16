@@ -61,7 +61,7 @@ const UserInfo = () => {
       });
       const data = await response.json();
       dispatch(updateUser(data));
-      message.success('Thông tin người dùng đã được cập nhật thành công');
+      //message.success('Thông tin người dùng đã được cập nhật thành công');
       fetchUserData();
     } catch (error) {
       message.error('Đã xảy ra lỗi khi cập nhật thông tin người dùng');

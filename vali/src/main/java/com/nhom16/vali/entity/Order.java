@@ -2,7 +2,7 @@ package com.nhom16.vali.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "orders")
@@ -21,12 +21,13 @@ public class Order {
     private String notes;
     private String shippingStatus;
     private String paymentStatus;
+    private LocalDateTime createdAt;
 
     // thành phần phương thức
 
     public Order(String id, String userId, List<CartItem> cartItems, double totalPrice, double shippingCost,
             double orderTotal, String shippingMethod, String paymentMethod, String shippingAddress, String notes,
-            String shippingStatus, String paymentStatus) {
+            String shippingStatus, String paymentStatus, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
         this.cartItems = cartItems;
@@ -39,6 +40,7 @@ public class Order {
         this.notes = notes;
         this.shippingStatus = shippingStatus;
         this.paymentStatus = paymentStatus;
+        this.createdAt = createdAt;
     }
 
     public Order() {
@@ -140,6 +142,14 @@ public class Order {
         this.paymentStatus = paymentStatus;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -155,6 +165,7 @@ public class Order {
                 ", notes='" + notes + '\'' +
                 ", shippingStatus='" + shippingStatus + '\'' +
                 ", paymentStatus='" + paymentStatus + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 '}';
     }
 }

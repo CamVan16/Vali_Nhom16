@@ -50,6 +50,12 @@ const OrderHistory = () => {
       key: 'shippingStatus',
     },
     {
+      title: 'Thời gian đặt hàng',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (createdAt) => new Date(createdAt).toLocaleString('vi-VN'),
+    },
+    {
       title: '',
       key: 'action',
       render: (record) => (
@@ -186,6 +192,8 @@ const OrderHistory = () => {
                       <Col span={12}>{selectedOrder.paymentStatus}</Col>
                       <Col span={12}>Trạng thái giao hàng:</Col>
                       <Col span={12}>{selectedOrder.shippingStatus}</Col>
+                      <Col span={12}>Thời gian tạo:</Col>
+                      <Col span={12}>{new Date(selectedOrder.createdAt).toLocaleString('vi-VN')}</Col>
                     </Row>
                   </Space>
                 </List.Item>

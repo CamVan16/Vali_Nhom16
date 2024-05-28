@@ -1,12 +1,9 @@
-import { Carousel, Menu, message } from "antd";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { Menu} from "antd";
+import React, {useState } from "react";
 import { getItem } from "../../utils";
-import { FormOutlined, ProductOutlined, FileImageOutlined, DeliveredProcedureOutlined, UserOutlined, MenuOutlined, GroupOutlined, WechatOutlined } from "@ant-design/icons";
+import {  UserOutlined, ShoppingOutlined, FileSearchOutlined } from "@ant-design/icons";
 import CustomizedContent from "./components/CustomizedContent";
-
 import AdminUser from "../../components/AdminUser/AdminUser";
-import { useQueries } from "@tanstack/react-query";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import AdminOrder from "../../components/AdminOrder/AdminOrder";
 const AdminPage = () => {
@@ -14,11 +11,9 @@ const AdminPage = () => {
 
   const items = [
     getItem("Quản lý khách hàng", "users",<UserOutlined />),
-    getItem("Quản lý sản phẩm", "products",<UserOutlined />),
-    getItem("Quản lý hoá đơn ", "orders",<UserOutlined />),
+    getItem("Quản lý sản phẩm", "products",<ShoppingOutlined />),
+    getItem("Quản lý hoá đơn ", "orders",<FileSearchOutlined />),
   ];
-
-  
 
   const handleOnCLick = ({ key }) => {
     setKeySelected(key);
