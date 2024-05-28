@@ -32,7 +32,6 @@ public class Product {
     public Product() {
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }

@@ -111,7 +111,8 @@ public class UserController {
         String oldPassword = passwordData.get("oldPassword");
         String newPassword = passwordData.get("newPassword");
         String confirmPassword = passwordData.get("confirmPassword");
-        return new ResponseEntity<>(userService.changePassword(userId, oldPassword, newPassword, confirmPassword), HttpStatus.OK);
+        return new ResponseEntity<>(userService.changePassword(userId, oldPassword, newPassword, confirmPassword),
+                HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{id}")

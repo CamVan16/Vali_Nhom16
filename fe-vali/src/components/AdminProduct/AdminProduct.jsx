@@ -102,15 +102,15 @@ const AdminProduct = () => {
       ...selectedProduct,
       name: values.name,
       type: values.type,
-      discount: values.discount,
+      discount: parseInt(values.discount, 10),
       img: colorImages.reduce((acc, { color, url }) => {
         acc[color] = url;
         return acc;
       }, {}),
       price: {
-        S: values.priceS,
-        M: values.priceM,
-        L: values.priceL,
+        S: parseFloat(values.priceS),
+        M: parseFloat(values.priceM),
+        L: parseFloat(values.priceL),
       },
       stock: colorStocks.reduce((acc, { color, ...sizes }) => {
         acc[color] = sizes;
@@ -155,6 +155,29 @@ const AdminProduct = () => {
       console.error('Error saving product:', error);
       message.error(isEditing ? 'Failed to update product' : 'Failed to add product');
     }
+  };
+  const handleDelete = (id) => {
+    confirm({
+      title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+      onOk: async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/api/v1/product/delete/${id}`, {
+            method: 'DELETE',
+          });
+          if (!response.ok) {
+            throw new Error('Failed to delete product');
+          }
+          message.success('Product deleted successfully');
+          fetchProducts();
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          message.error('Failed to delete product');
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   };
 
   const handleColorChange = (index, key, value) => {
@@ -204,7 +227,7 @@ const AdminProduct = () => {
       render: (text, record) => (
         <span>
           <Button type="link" onClick={() => handleViewDetails(record)}>Xem chi tiết</Button>
-          {/* <Button type="link" onClick={() => handleDelete(record.id)}>Delete</Button> */}
+          <Button type="link" onClick={() => handleDelete(record.id)}>Xoá</Button>
         </span>
       ),
     },
@@ -244,7 +267,7 @@ const AdminProduct = () => {
       <Table columns={columns} dataSource={filteredProducts} rowKey="id" />
 
       <Modal
-        title={isEditing ? "Chỉnh sửa" : "Thêm"}
+        title={isEditing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"}
         visible={visible}
         onCancel={handleCloseModal}
         footer={[
@@ -264,7 +287,7 @@ const AdminProduct = () => {
             <Input />
           </Form.Item>
           <Form.Item label="Giảm giá" name="discount" rules={[{ required: true, message: 'Hãy nhập giảm giá' }]}>
-            <Input type="number" />
+            <Input type="number" step="1" />
           </Form.Item>
 
           <h3>Giá:</h3>
@@ -355,3 +378,4 @@ const AdminProduct = () => {
 };
 
 export default AdminProduct;
+

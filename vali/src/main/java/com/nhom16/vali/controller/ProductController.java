@@ -43,6 +43,7 @@ public class ProductController {
         }
         product.setName(productDetails.getName());
         product.setType(productDetails.getType());
+        product.setImg(productDetails.getImg());
         product.setPrice(productDetails.getPrice());
         product.setDiscount(productDetails.getDiscount());
         product.setStock(productDetails.getStock());
@@ -51,9 +52,14 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    // @DeleteMapping(value = "/delete/{id}")
-    // public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-    // productService.deleteProduct(id);
-    // return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    // }
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
+        Product product = productService.getProductById(id);
+        if (product != null) {
+            productService.deleteProduct(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -33,7 +33,7 @@ const OrderPage = () => {
           setSelectedAddress(data.addresses[0]);
         }
       } catch (error) {
-        message.error('Failed to fetch user information');
+        //message.error('Failed to fetch user information');
         console.error('Fetch user failed:', error);
       }
     };
@@ -44,7 +44,7 @@ const OrderPage = () => {
   const handleAddAddress = async () => {
     try {
       if (!newAddress.name || !newAddress.address || !newAddress.mobile) {
-        message.error('Vui lòng nhập đầy đủ thông tin địa chỉ');
+        //message.error('Vui lòng nhập đầy đủ thông tin địa chỉ');
         return;
       }
 
@@ -61,7 +61,7 @@ const OrderPage = () => {
       setModalVisible(false);
       setNewAddress({ name: '', address: '', mobile: '' });
     } catch (error) {
-      message.error('Failed to add new address');
+      //message.error('Failed to add new address');
       console.error('Failed to add new address:', error);
     }
   };
@@ -101,45 +101,12 @@ const OrderPage = () => {
         body: JSON.stringify(selectedItems.map(item => item.id)),
       });
       if (!response.ok) throw new Error('Failed to clear selected items');
-      message.success('Selected items cleared');
+      //message.success('Selected items cleared');
     } catch (error) {
-      message.error('Failed to clear selected items');
+      //message.error('Failed to clear selected items');
       console.error('Failed to clear selected items:', error);
     }
   };
-
-  const handleVNPayReturn = async (params) => {
-    const orderId = params.get('orderId');
-    const vnpayResponseCode = params.get('vnp_ResponseCode');
-
-    if (orderId && vnpayResponseCode === '00') {
-      try {
-        const response = await fetch(`http://localhost:8080/api/v1/payment/confirm`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Object.fromEntries(params)),
-        });
-
-        if (!response.ok) throw new Error('Failed to confirm payment');
-
-        message.success('Order placed successfully', 5);
-        await clearSelectedItems();
-        navigate("/CartProductPage");
-      } catch (error) {
-        message.error('Failed to confirm payment');
-        console.error('Failed to confirm payment:', error);
-      }
-    } else {
-      message.error('VNPay payment failed');
-    }
-  };
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('vnp_ResponseCode')) {
-      handleVNPayReturn(params);
-    }
-  }, []);
 
   const placeOrder = async () => {
     try {
@@ -169,11 +136,13 @@ const OrderPage = () => {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const createdOrder = await response.json();
+        // await clearSelectedItems();
         const paymentResponse = await fetch(`http://localhost:8080/api/v1/payment/create?amount=${orderTotal}&orderId=${createdOrder.id}`);
         if (!paymentResponse.ok) throw new Error('Failed to create payment URL');
 
         const paymentData = await paymentResponse.json();
         window.location.href = paymentData.paymentUrl;
+        await clearSelectedItems();
       } else {
         const response = await fetch(`http://localhost:8080/api/v1/order/save`, {
           method: 'POST',
@@ -191,10 +160,42 @@ const OrderPage = () => {
         }, 2000);
       }
     } catch (error) {
-      message.error('Failed to place order');
+      //message.error('Failed to place order');
       console.error('Failed to place order:', error);
     }
   };
+  const handleVNPayReturn = async (params) => {
+    const orderId = params.get('orderId');
+    const vnpayResponseCode = params.get('vnp_ResponseCode');
+
+    if (orderId && vnpayResponseCode === '00') {
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/payment/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(params)),
+        });
+
+        if (!response.ok) throw new Error('Failed to confirm payment');
+
+        //message.success('Order placed successfully', 5);
+        // await clearSelectedItems();
+        navigate("/CartProductPage");
+      } catch (error) {
+        //message.error('Failed to confirm payment');
+        console.error('Failed to confirm payment:', error);
+      }
+    } else {
+      message.error('VNPay payment failed');
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('vnp_ResponseCode')) {
+      handleVNPayReturn(params);
+    }
+  }, []);
 
   const columns = [
     {
@@ -351,5 +352,3 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
-
-

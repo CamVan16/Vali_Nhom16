@@ -236,6 +236,7 @@ const AdminOrder = () => {
         title="Chi tiết hoá đơn"
         visible={visible}
         onCancel={handleCloseModal}
+        width={800} 
         footer={[
           <Button key="close" onClick={handleCloseModal}>
             Đóng

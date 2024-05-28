@@ -61,7 +61,9 @@ public class UserService {
         }
         return Optional.empty();
     }
-    public Map<String, String> changePassword(String userId, String oldPassword, String newPassword, String confirmPassword) {
+
+    public Map<String, String> changePassword(String userId, String oldPassword, String newPassword,
+            String confirmPassword) {
         User user = repo.findBy_id(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with this id: " + userId));
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
