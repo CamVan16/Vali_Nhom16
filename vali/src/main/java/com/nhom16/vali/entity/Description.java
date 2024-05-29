@@ -27,7 +27,6 @@ public class Description {
     public Description() {
     }
 
-    // Getters and Setters
     public String getBranch() {
         return branch;
     }

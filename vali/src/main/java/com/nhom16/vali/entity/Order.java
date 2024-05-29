@@ -3,7 +3,7 @@ package com.nhom16.vali.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Document(collection = "orders")
 public class Order {
@@ -11,7 +11,7 @@ public class Order {
     @Id
     private String id;
     private String userId;
-    private List<CartItem> cartItems;
+    private ArrayList<CartItem> cartItems;
     private double totalPrice;
     private double shippingCost;
     private double orderTotal;
@@ -25,7 +25,7 @@ public class Order {
 
     // thành phần phương thức
 
-    public Order(String id, String userId, List<CartItem> cartItems, double totalPrice, double shippingCost,
+    public Order(String id, String userId, ArrayList<CartItem> cartItems, double totalPrice, double shippingCost,
             double orderTotal, String shippingMethod, String paymentMethod, String shippingAddress, String notes,
             String shippingStatus, String paymentStatus, LocalDateTime createdAt) {
         this.id = id;
@@ -66,7 +66,7 @@ public class Order {
         return cartItems;
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
+    public void setCartItems(ArrayList<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
 

@@ -2,22 +2,23 @@ package com.nhom16.vali.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
+import java.util.*;
 
 @Document(collection = "users")
 public class User {
-    //thành phần dữ liệu
+    // thành phần dữ liệu
     @Id
     private String _id;
     private String username;
     private String email;
-    private List<Address> addresses;
+    private ArrayList<Address> addresses;
     private String mobile;
     private String password;
     private boolean isAdmin;
-    
-    //thành phần phương thức
-    public User(String _id, String username, String email, List<Address> addresses, String mobile, String password, boolean isAdmin) {
+
+    // thành phần phương thức
+    public User(String _id, String username, String email, ArrayList<Address> addresses, String mobile, String password,
+            boolean isAdmin) {
         this._id = _id;
         this.username = username;
         this.email = email;
@@ -54,11 +55,11 @@ public class User {
         this.email = email;
     }
 
-    public List<Address> getAddresses() {
+    public ArrayList<Address> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(List<Address> addresses) {
+    public void setAddresses(ArrayList<Address> addresses) {
         this.addresses = addresses;
     }
 
@@ -77,11 +78,12 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public boolean getIsAdmin() { 
+
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setIsAdmin(boolean isAdmin) { 
+    public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 

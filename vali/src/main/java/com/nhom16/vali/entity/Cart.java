@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Document(collection = "carts")
 public class Cart {
@@ -12,10 +11,10 @@ public class Cart {
     @Id
     private String id;
     private String userId;
-    private List<CartItem> items = new ArrayList<>();
+    private ArrayList<CartItem> items = new ArrayList<>();
 
     // thành phần phương thức
-    public Cart(String id, String userId, List<CartItem> items) {
+    public Cart(String id, String userId, ArrayList<CartItem> items) {
         this.id = id;
         this.userId = userId;
         this.items = items != null ? items : new ArrayList<>();
@@ -41,11 +40,11 @@ public class Cart {
         this.userId = userId;
     }
 
-    public List<CartItem> getItems() {
+    public ArrayList<CartItem> getItems() {
         return items;
     }
 
-    public void setItems(List<CartItem> items) {
+    public void setItems(ArrayList<CartItem> items) {
         this.items = items;
     }
 }

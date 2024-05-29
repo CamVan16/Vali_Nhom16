@@ -145,9 +145,9 @@ public class UserController {
                     return ResponseEntity.ok(user);
                 }
             }
-            return ResponseEntity.notFound().build(); // Address not found
+            return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.notFound().build(); // User not found
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -161,7 +161,7 @@ public class UserController {
             userService.saveOrUpdate(user);
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.notFound().build(); // User not found
+            return ResponseEntity.notFound().build();
         }
     }
 

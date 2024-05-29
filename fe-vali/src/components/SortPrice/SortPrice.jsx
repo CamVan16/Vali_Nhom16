@@ -11,7 +11,7 @@ const SortPrice = ({ onPriceChange }) => {
       <Select
         defaultValue="Tất cả"
         style={{
-          width: 160,
+          width: 180,
         }}
         onChange={handleChange}
         options={[

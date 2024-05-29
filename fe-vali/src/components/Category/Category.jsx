@@ -10,7 +10,7 @@ const Category = ({ onCategoryChange }) => {
       <Select
       defaultValue="Tất cả"
       style={{
-        width: 120,
+        width: 180,
       }}
       onChange={handleChange}
       options={[
